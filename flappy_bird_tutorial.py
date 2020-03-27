@@ -10,7 +10,7 @@ pygame.font.init()
 
 WIN_WIDTH = 500
 WIN_HEIGHT = 800
-#Test Comment -Betsy
+
 #Got my images from this source
 #https://github.com/odedw/elm-plane
 
