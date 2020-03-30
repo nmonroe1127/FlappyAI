@@ -75,6 +75,7 @@ def player_game(plane):
     score = 0
     # will run until birdy dies by the pipe or the ground
     run = True
+    fall = True
     while run:
         clock.tick(30)
 
@@ -116,6 +117,21 @@ def player_game(plane):
         # If the bird hits the ground
         if plane.y + plane.img.get_height() >= 730:
             run = False
+
+        if run == False:
+            while fall == True:
+                clock.tick(40)
+                if plane.y + plane.img.get_height() >= 730:
+                    fall = False
+                elif plane.y + plane.img.get_height() < 730:
+                    plane.move()
+                    i = 0
+                    win.blit(FIRE_IMGS[i], (plane.x, plane.y))
+                    i += 1
+                    if i == 4:
+                        i = 0
+                    pygame.display.update()
+                    draw_window(win, plane, pipes, base, score, high)
 
         base.move()
         draw_window(win, plane, pipes, base, score, high)
