@@ -1,6 +1,6 @@
 import pygame
 import os
-
+import time
 # Storing the different states of the plane through images
 PLANE_IMGS = [pygame.transform.scale(pygame.image.load(os.path.join("Images", "plane1.png")), (65, 65)),
               pygame.transform.scale(pygame.image.load(os.path.join("Images", "plane2.png")), (65, 65)),
@@ -53,10 +53,10 @@ class Plane:
         d = self.vel * self.tick_count + 1.5 * self.tick_count ** 2
         # Make sure the velocity is not too extreme (terminal velocity physics booyah)
         if d >= 16:
-            d = 12
+            d = 16
         # Make sure the movement upwards is big enough to be noticeable
         if d < 0:
-            d -= 1.8
+            d -= 2
 
         self.y = self.y + d
 
@@ -132,19 +132,20 @@ class Plane:
         # When the image count is less than 15, it will show the last image
         elif self.img_count < self.ANIMATION_TIME * 3:
             self.img = self.IMGS[2]
-        # When the image count is less than 20, it will go back to image two
-        elif self.img_count < self.ANIMATION_TIME * 4:
-            self.img = self.IMGS[1]
-        # Finally, when it hits 21, it will show the initial image and reset the counter
-        elif self.img_count == self.ANIMATION_TIME * 4 + 1:
-            self.img = self.IMGS[0]
             self.img_count = 0
+        # # When the image count is less than 20, it will go back to image two
+        # elif self.img_count < self.ANIMATION_TIME * 4:
+        #     self.img = self.IMGS[1]
+        # # Finally, when it hits 21, it will show the initial image and reset the counter
+        # elif self.img_count == self.ANIMATION_TIME * 4 + 1:
+        #     self.img = self.IMGS[0]
+        #     self.img_count = 0
 
         # Rotate an image around its center in Pygame (tilt the birdy)
         # https://stackoverflow.com/questions/4183208/how-do-i-rotate-an-image-around-its-center-using-pygame
         rotated_image = pygame.transform.rotate(self.img, self.tilt)
 
-        # 500, 800
+        # # 500, 800
         if self.spin_count < 4:
             self.x += 40
             self.tilt = 0
