@@ -141,7 +141,7 @@ def eval_genomes(self, genomes, config, generations):
             # can add this line to give more reward for passing through a pipe (not required)
             for genome in ge:
                 genome.fitness += 5
-            pipes.append(Rock(WIN_WIDTH))
+            pipes.append(Rock(600))
 
         for r in rem:
             pipes.remove(r)
@@ -360,7 +360,8 @@ def configuration(population_size, generations):
 def option_two(win):
     # Let user choose what they finnna do
     #user_inputs()
-    configuration(10, 10)
+    # Configuration(population, generations)
+    configuration(15, 5)
     restart_game = pygame.Rect(192, 220, 117, 30)
     # Draw da buttons
     pygame.draw.rect(win, (30, 30, 30), restart_game)

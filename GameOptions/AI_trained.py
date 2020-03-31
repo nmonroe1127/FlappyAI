@@ -126,7 +126,6 @@ def eval_genomes(self, genomes, config, generations):
         rem = []
         add_pipe = False
         for pipe in pipes:
-            pipe.move()
             # check for collision
             for bird in birds:
                 if pipe.collide(bird):
@@ -141,13 +140,13 @@ def eval_genomes(self, genomes, config, generations):
             if not pipe.passed and pipe.x < bird.x:
                 pipe.passed = True
                 add_pipe = True
-
+            pipe.move()
         if add_pipe:
             score += 1
             # can add this line to give more reward for passing through a pipe (not required)
             for genome in ge:
                 genome.fitness += 5
-            pipes.append(Rock(WIN_WIDTH))
+            pipes.append(Rock(600))
 
         for r in rem:
             pipes.remove(r)
@@ -161,9 +160,10 @@ def eval_genomes(self, genomes, config, generations):
         ai_window(win, birds, pipes, base, score, high, gen, full_size)
 
         # break if score gets large enough
-        # break if score gets large enough
-        if score == 50:
+        if score == 100:
+            # ge[0].fitness = 1000000
             break
+    # print(score)
     # Save the highest score of the session to file for later
     if high < score:
         with open('./HighScoreFiles/AI_highscores.dat', 'wb') as file:
@@ -197,7 +197,7 @@ def configuration(generations):
 # Option button 1, regular game for the user to play
 def option_three(win):
     # Give user the ability to choose the number of generations and population size
-    configuration(30)
+    configuration(20)
 
     restart_game = pygame.Rect(192, 220, 117, 30)
     # Draw da buttons
