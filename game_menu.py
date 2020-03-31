@@ -1,16 +1,16 @@
 import pygame
-import time
 import os
 import pygame.freetype
 
 # Importing objects from files
-from Objects.plane import Plane
+from Objects.plane import UserPlane
 from Objects.base import Base
 
 # Import the Game Options Functions
 from GameOptions.user_playing import option_one
 from GameOptions.AI_learning import option_two
 from GameOptions.AI_trained import option_three
+from GameOptions.user_against_AI import option_four
 
 pygame.font.init()
 
@@ -18,7 +18,7 @@ pygame.font.init()
 # https://github.com/odedw/elm-plane
 
 
-def menu_window(win, plane, plane2, plane3, plane4, base, start_button1, start_button2, start_button3):
+def menu_window(win, plane, plane2, plane3, plane4, base, start_button1, start_button2, start_button3, start_button4):
     # .blit() is basically just draw for pygame
     # Place the background image center on the screen or (0,0) due to Pygame orientation
     win.blit(pygame.transform.scale2x(pygame.image.load(os.path.join("Images", "background.png"))), (0, 0))
@@ -49,15 +49,20 @@ def menu_window(win, plane, plane2, plane3, plane4, base, start_button1, start_b
     # Give the button some text
     start3 = pygame.font.SysFont('Times New Roman', 15).render("Watch Trained AI", 1, (255, 255, 255))
     win.blit(start3, (197, 490))
+    # Draw da buttons
+    pygame.draw.rect(win, (30, 30, 30), start_button4)
+    # Give the button some text
+    start3 = pygame.font.SysFont('Times New Roman', 15).render("Play Against AI", 1, (255, 255, 255))
+    win.blit(start3, (197, 590))
     # Updates the window with new visuals every frame
     pygame.display.update()
 
 
 def main():
-    plane = Plane(220, 570)
-    plane2 = Plane(220, 50)
-    plane3 = Plane(380, 330)
-    plane4 = Plane(60, 290)
+    plane = UserPlane(220, 570)
+    plane2 = UserPlane(220, 50)
+    plane3 = UserPlane(380, 330)
+    plane4 = UserPlane(60, 290)
     plane.spin_count = 0
     plane2.spin_count = 21
     plane3.spin_count = 10
@@ -71,6 +76,7 @@ def main():
     start_button1 = pygame.Rect(192, 285, 117, 30)
     start_button2 = pygame.Rect(192, 385, 117, 30)
     start_button3 = pygame.Rect(192, 485, 117, 30)
+    start_button4 = pygame.Rect(192, 585, 117, 30)
 
     # Make the bird move as it waits for the user to start the game
     wait = True
@@ -92,9 +98,11 @@ def main():
                     elif start_button3.collidepoint(event.pos):
                         # Whenever you want to watch a near perfect version of the AI
                         option_three(win)
+                    elif start_button4.collidepoint(event.pos):
+                        option_four(win)
 
         base.move()
-        menu_window(win, plane, plane2, plane3, plane4, base, start_button1, start_button2, start_button3)
+        menu_window(win, plane, plane2, plane3, plane4, base, start_button1, start_button2, start_button3, start_button4)
 
     pygame.quit()
     quit()

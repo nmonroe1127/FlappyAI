@@ -7,7 +7,7 @@ import pygame.freetype
 # Importing Objects from files
 from neat.nn import FeedForwardNetwork
 
-from Objects.plane import Plane
+from Objects.plane import AIPlane
 from Objects.rock import Rock
 from Objects.base import Base
 
@@ -70,7 +70,7 @@ def eval_genomes(self, genomes, config, generations):
         genome.fitness = 0  # start with fitness level of 0
         net = FeedForwardNetwork.create(genome, config)
         nets.append(net)
-        birds.append(Plane(230, 350))
+        birds.append(AIPlane(230, 350))
         ge.append(genome)
 
     full_size = len(birds)
