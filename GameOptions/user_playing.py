@@ -115,15 +115,15 @@ def player_game(plane):
             rocks.remove(r)
 
         # If the bird hits the ground
-        if plane.y + plane.img.get_height() >= 730:
+        if plane.y + plane.img.get_height() >= 780:
             run = False
 
         if run == False:
             while fall == True:
                 clock.tick(40)
-                if plane.y + plane.img.get_height() >= 730:
+                if plane.y + plane.img.get_height() >= 780:
                     fall = False
-                elif plane.y + plane.img.get_height() < 730:
+                elif plane.y + plane.img.get_height() < 780:
                     plane.move()
                     i = 0
                     win.blit(FIRE_IMGS[i], (plane.x, plane.y))

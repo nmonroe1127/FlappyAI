@@ -177,9 +177,9 @@ def user_vs_AI(config, plane):
         if run == False:
             while fall == True:
                 clock.tick(40)
-                if plane.y + plane.img.get_height() >= 730:
+                if plane.y + plane.img.get_height() >= 780:
                     fall = False
-                elif plane.y + plane.img.get_height() < 730:
+                elif plane.y + plane.img.get_height() < 780:
                     plane.move()
                     i = 0
                     win.blit(FIRE_IMGS[i], (plane.x, plane.y))
@@ -188,7 +188,7 @@ def user_vs_AI(config, plane):
                         i = 0
                     pygame.display.update()
                     draw_window(win, plane, bird, rocks, base, score, high)
-                elif bird.y + bird.img.get_height() < 730:
+                elif bird.y + bird.img.get_height() < 780:
                     bird.move()
                     i = 0
                     win.blit(FIRE_IMGS[i], (bird.x, bird.y))
