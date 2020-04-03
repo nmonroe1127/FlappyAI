@@ -7,7 +7,7 @@ BASE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("Images", "gr
 
 # The floor of the game screen
 class Base:
-    # How fast the floor is moving, will be same as velocity of the Rocks
+    # How fast the floor is moving, will be same as velocity of the rocks
     VEL = 5
     # The base will need to be rotated so we need to know its width
     WIDTH = BASE_IMG.get_width()
@@ -38,6 +38,6 @@ class Base:
         # Above is a repeated cycling so that there is always a base at the bottom of the screen
 
     def draw(self, win):
-        # Drawing the two pipe images side by side to achieve rolling look
+        # Drawing the two rock images side by side to achieve rolling look
         win.blit(self.IMG, (self.x1, self.y))
         win.blit(self.IMG, (self.x2, self.y))

@@ -30,13 +30,13 @@ WIN = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 gen = 0
 
 
-def ai_window(win, bird, plane, pipes, base, score, high):
+def ai_window(win, bird, plane, rockvs, base, score, high):
     # .blit() is basically just draw for pygame
     # Place the background image center on the screen or (0,0) due to Pygame orientation
     win.blit(BG_IMG, (0, 0))
-    # Draw the multiple pipes that should be on the screen using PIPE class draw method
-    for pipe in pipes:
-        pipe.draw(win)
+    # Draw the multiple rocks that should be on the screen using ROCK class draw method
+    for rock in rocks:
+        rock.draw(win)
     # Render the high score to the screen that is pulled from a file
     high_score = STAT_FONT.render("High Score: " + str(high), 1, (0, 0, 0))
     win.blit(high_score, (WIN_WIDTH - 10 - high_score.get_width(), 10))
@@ -52,13 +52,13 @@ def ai_window(win, bird, plane, pipes, base, score, high):
     pygame.display.update()
 
 
-def draw_window(win, plane, bird, pipes, base, score, high):
+def draw_window(win, plane, bird, rocks, base, score, high):
     # .blit() is basically just draw for pygame
     # Place the background image center on the screen or (0,0) due to Pygame orientation
     win.blit(BG_IMG, (0, 0))
-    # Draw the multiple pipes that should be on the screen using PIPE class draw method
-    for pipe in pipes:
-        pipe.draw(win)
+    # Draw the multiple rocks that should be on the screen using ROCK class draw method
+    for rock in rocks:
+        rock.draw(win)
     # Render the high score to the screen that is pulled from a file
     high_score = pygame.font.SysFont("comicsans", 50).render("High Score: " + str(high), 1, (0, 0, 0))
     win.blit(high_score, (WIN_WIDTH - 10 - high_score.get_width(), 10))
@@ -78,7 +78,7 @@ def draw_window(win, plane, bird, pipes, base, score, high):
 # This will hold the code for watching the AI learn
 def user_vs_AI(config, plane):
     base = Base(690)
-    pipes = [Rock(700)]
+    rocks = [Rock(700)]
 
     # Setup the AI plane
     with open('./AIConfigurations/config-best.txt', 'rb') as f:
@@ -107,11 +107,11 @@ def user_vs_AI(config, plane):
                 plane.jump()
                 wait = False
         base.move()
-        draw_window(win, plane, bird, pipes, base, 0, high)
+        draw_window(win, plane, bird, rocks, base, 0, high)
 
-    # Keep track of how many pipes have been passed
+    # Keep track of how many rocks have been passed
     score = 0
-    # will run until birdy dies by the pipe or the ground
+    # will run until birdy dies by the rock or the ground
     run = True
     fall = True
     while run:
@@ -125,47 +125,47 @@ def user_vs_AI(config, plane):
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 plane.jump()
 
-        pipe_ind = 0
-        if len(pipes) > 1 and bird.x > pipes[0].x + pipes[0].ROCK_TOP.get_width():  # determine whether to use the first or second
-            pipe_ind = 1  # pipe on the screen for neural network input
+        rock_ind = 0
+        if len(rocks) > 1 and bird.x > rocks[0].x + rocks[0].ROCK_TOP.get_width():  # determine whether to use the first or second
+            rock_ind = 1  # rock on the screen for neural network input
 
         bird.move()
 
-        # send bird location, top pipe location and bottom pipe location and determine from network whether to jump or not
+        # send bird location, top rock location and bottom rock location and determine from network whether to jump or not
         output = net.activate(
-            (bird.y, abs(bird.y - pipes[pipe_ind].height), abs(bird.y - pipes[pipe_ind].bottom)))
+            (bird.y, abs(bird.y - rocks[rock_ind].height), abs(bird.y - rocks[rock_ind].bottom)))
 
         if output[0] > 0.5:  # we use a tanh activation function so result will be between -1 and 1. if over 0.5 jump
             bird.jump()
 
-        # Array to hold pipes that have left the screen and need to be removed
+        # Array to hold rocks that have left the screen and need to be removed
         rem = []
-        # Only add passed pipes
-        add_pipe = False
-        for pipe in pipes:
-            # If a bird pixels touches a pipe pixel the bird will die
-            if pipe.collide(plane):
+        # Only add passed rocks
+        add_rock = False
+        for rock in rocks:
+            # If a bird pixels touches a rock pixel the bird will die
+            if rock.collide(plane):
                 run = False
-            if pipe.collide(bird):
+            if rock.collide(bird):
                 run = False
-            # If pipe is completely off the screen
-            if pipe.x + pipe.ROCK_TOP.get_width() < 0:
-                rem.append(pipe)
-                # This will check if the bird has passed the pipe
-            if not pipe.passed and pipe.x < plane.x:
-                pipe.passed = True
-                add_pipe = True
-            pipe.move()
-        # For all the pipes that have been passed we need to regenerate new ones
-        if add_pipe:
-            # Signifies in the scoreboard that a pipe has been passed
+            # If rock is completely off the screen
+            if rock.x + rock.ROCK_TOP.get_width() < 0:
+                rem.append(rock)
+                # This will check if the bird has passed the rock
+            if not rock.passed and rock.x < plane.x:
+                rock.passed = True
+                add_rock = True
+            rock.move()
+        # For all the rocks that have been passed we need to regenerate new ones
+        if add_rock:
+            # Signifies in the scoreboard that a rock has been passed
             score += 1
             if score > high:
                 high += 1
-            pipes.append(Rock(600))
+            rocks.append(Rock(600))
 
         for r in rem:
-            pipes.remove(r)
+            rocks.remove(r)
 
         # If the bird hits the ground
         if plane.y + plane.img.get_height() >= 730:
@@ -187,7 +187,7 @@ def user_vs_AI(config, plane):
                     if i == 4:
                         i = 0
                     pygame.display.update()
-                    draw_window(win, plane, bird, pipes, base, score, high)
+                    draw_window(win, plane, bird, rocks, base, score, high)
                 elif bird.y + bird.img.get_height() < 730:
                     bird.move()
                     i = 0
@@ -196,10 +196,10 @@ def user_vs_AI(config, plane):
                     if i == 4:
                         i = 0
                     pygame.display.update()
-                    draw_window(win, plane, bird, pipes, base, score, high)
+                    draw_window(win, plane, bird, rocks, base, score, high)
 
         base.move()
-        draw_window(win, plane, bird, pipes, base, score, high)
+        draw_window(win, plane, bird, rocks, base, score, high)
 
     # Save the highest score of the session to file for later
     with open('./HighScoreFiles/highscores.dat', 'wb') as file:
