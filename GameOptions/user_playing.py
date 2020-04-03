@@ -23,13 +23,13 @@ STAT_FONT = pygame.font.SysFont("comicsans", 50)
 BUTTON_FONT = pygame.font.SysFont('Times New Roman', 15)
 
 
-def draw_window(win, plane, pipes, base, score, high):
+def draw_window(win, plane, rocks, base, score, high):
     # .blit() is basically just draw for pygame
     # Place the background image center on the screen or (0,0) due to Pygame orientation
     win.blit(BG_IMG, (0, 0))
-    # Draw the multiple pipes that should be on the screen using PIPE class draw method
-    for pipe in pipes:
-        pipe.draw(win)
+    # Draw the multiple rocks that should be on the screen using ROCK class draw method
+    for rock in rocks:
+        rock.draw(win)
     # Render the high score to the screen that is pulled from a file
     high_score = pygame.font.SysFont("comicsans", 50).render("High Score: " + str(high), 1, (0, 0, 0))
     win.blit(high_score, (WIN_WIDTH - 10 - high_score.get_width(), 10))
@@ -46,7 +46,7 @@ def draw_window(win, plane, pipes, base, score, high):
 
 def player_game(plane):
     base = Base(690)
-    pipes = [Rock(700)]
+    rocks = [Rock(700)]
 
     win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
     clock = pygame.time.Clock()
@@ -69,11 +69,11 @@ def player_game(plane):
                 plane.jump()
                 wait = False
         base.move()
-        draw_window(win, plane, pipes, base, 0, high)
+        draw_window(win, plane, rocks, base, 0, high)
 
-    # Keep track of how many pipes have been passed
+    # Keep track of how many rocks have been passed
     score = 0
-    # will run until birdy dies by the pipe or the ground
+    # will run until birdy dies by the rock or the ground
     run = True
     fall = True
     while run:
@@ -87,32 +87,32 @@ def player_game(plane):
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 plane.jump()
 
-        # Array to hold pipes that have left the screen and need to be removed
+        # Array to hold rocks that have left the screen and need to be removed
         rem = []
-        # Only add passed pipes
-        add_pipe = False
-        for pipe in pipes:
-            # If a bird pixels touches a pipe pixel the bird will die
-            if pipe.collide(plane):
+        # Only add passed rocks
+        add_rock = False
+        for rock in rocks:
+            # If a bird pixels touches a rock pixel the bird will die
+            if rock.collide(plane):
                 run = False
-            # If pipe is completely off the screen
-            if pipe.x + pipe.ROCK_TOP.get_width() < 0:
-                rem.append(pipe)
-                # This will check if the bird has passed the pipe
-            if not pipe.passed and pipe.x < plane.x:
-                pipe.passed = True
-                add_pipe = True
-            pipe.move()
-        # For all the pipes that have been passed we need to regenerate new ones
-        if add_pipe:
-            # Signifies in the scoreboard that a pipe has been passed
+            # If rock is completely off the screen
+            if rock.x + rock.ROCK_TOP.get_width() < 0:
+                rem.append(rock)
+                # This will check if the bird has passed the rock
+            if not rock.passed and rock.x < plane.x:
+                rock.passed = True
+                add_rock = True
+            rock.move()
+        # For all the rocks that have been passed we need to regenerate new ones
+        if add_rock:
+            # Signifies in the scoreboard that a rock has been passed
             score += 1
             if score > high:
                 high += 1
-            pipes.append(Rock(600))
+            rocks.append(Rock(600))
 
         for r in rem:
-            pipes.remove(r)
+            rocks.remove(r)
 
         # If the bird hits the ground
         if plane.y + plane.img.get_height() >= 730:
@@ -131,10 +131,10 @@ def player_game(plane):
                     if i == 4:
                         i = 0
                     pygame.display.update()
-                    draw_window(win, plane, pipes, base, score, high)
+                    draw_window(win, plane, rocks, base, score, high)
 
         base.move()
-        draw_window(win, plane, pipes, base, score, high)
+        draw_window(win, plane, rocks, base, score, high)
 
     # Save the highest score of the session to file for later
     with open('./HighScoreFiles/highscores.dat', 'wb') as file:

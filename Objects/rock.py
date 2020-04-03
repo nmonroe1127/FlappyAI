@@ -8,7 +8,7 @@ ROCK_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("Images", "bo
 class Rock:
     # Space between two rocks
     GAP = 200
-    # Pipes move, not the plane
+    # rocks move, not the plane
     VELOCITY = 5
 
     # Height of rock is random so not passed in
@@ -26,9 +26,9 @@ class Rock:
         # Image if the rock is attached to bottom of screen
         self.ROCK_BOTTOM = ROCK_IMG
 
-        # If the rock has already passed the pipe
+        # If the rock has already passed the rock
         self.passed = False
-        # Will define top, bottom, and length of pipes
+        # Will define top, bottom, and length of rocks
         self.set_height()
 
     def set_height(self):

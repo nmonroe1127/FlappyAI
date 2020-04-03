@@ -25,13 +25,13 @@ WIN = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 gen = 0
 
 
-def ai_window(win, birds, pipes, base, score, high, gen, full_size):
+def ai_window(win, birds, rocks, base, score, high, gen, full_size):
     # .blit() is basically just draw for pygame
     # Place the background image center on the screen or (0,0) due to Pygame orientation
     win.blit(BG_IMG, (0, 0))
-    # Draw the multiple pipes that should be on the screen using PIPE class draw method
-    for pipe in pipes:
-        pipe.draw(win)
+    # Draw the multiple rocks that should be on the screen using ROCK class draw method
+    for rock in rocks:
+        rock.draw(win)
     # Render the high score to the screen that is pulled from a file
     high_score = STAT_FONT.render("High Score: " + str(high), 1, (0, 0, 0))
     win.blit(high_score, (WIN_WIDTH - 10 - high_score.get_width(), 10))
@@ -76,7 +76,7 @@ def eval_genomes(genomes, config):
     full_size = len(birds)
 
     base = Base(690)
-    pipes = [Rock(700)]
+    rocks = [Rock(700)]
     score = 0
 
     clock = pygame.time.Clock()
@@ -99,18 +99,18 @@ def eval_genomes(genomes, config):
                 quit()
                 break
 
-        pipe_ind = 0
+        rock_ind = 0
         if len(birds) > 0:
-            if len(pipes) > 1 and birds[0].x > pipes[0].x + pipes[0].ROCK_TOP.get_width():  # determine whether to use the first or second
-                pipe_ind = 1  # pipe on the screen for neural network input
+            if len(rocks) > 1 and birds[0].x > rocks[0].x + rocks[0].ROCK_TOP.get_width():  # determine whether to use the first or second
+                rock_ind = 1  # rock on the screen for neural network input
 
         for x, bird in enumerate(birds):  # give each bird a fitness of 0.1 for each frame it stays alive
             ge[x].fitness += 0.1
             bird.move()
 
-            # send bird location, top pipe location and bottom pipe location and determine from network whether to jump or not
+            # send bird location, top rock location and bottom rock location and determine from network whether to jump or not
             output = nets[birds.index(bird)].activate(
-                (bird.y, abs(bird.y - pipes[pipe_ind].height), abs(bird.y - pipes[pipe_ind].bottom)))
+                (bird.y, abs(bird.y - rocks[rock_ind].height), abs(bird.y - rocks[rock_ind].bottom)))
 
             if output[0] > 0.5:  # we use a tanh activation function so result will be between -1 and 1. if over 0.5 jump
                 bird.jump()
@@ -118,33 +118,33 @@ def eval_genomes(genomes, config):
         base.move()
 
         rem = []
-        add_pipe = False
-        for pipe in pipes:
-            pipe.move()
+        add_rock = False
+        for rock in rocks:
+            rock.move()
             # check for collision
             for bird in birds:
-                if pipe.collide(bird):
+                if rock.collide(bird):
                     ge[birds.index(bird)].fitness -= 1
                     nets.pop(birds.index(bird))
                     ge.pop(birds.index(bird))
                     birds.pop(birds.index(bird))
 
-            if pipe.x + pipe.ROCK_TOP.get_width() < 0:
-                rem.append(pipe)
+            if rock.x + rock.ROCK_TOP.get_width() < 0:
+                rem.append(rock)
 
-            if not pipe.passed and pipe.x < bird.x:
-                pipe.passed = True
-                add_pipe = True
+            if not rock.passed and rock.x < bird.x:
+                rock.passed = True
+                add_rock = True
 
-        if add_pipe:
+        if add_rock:
             score += 1
-            # can add this line to give more reward for passing through a pipe (not required)
+            # can add this line to give more reward for passing through a rock (not required)
             for genome in ge:
                 genome.fitness += 5
-            pipes.append(Rock(600))
+            rocks.append(Rock(600))
 
         for r in rem:
-            pipes.remove(r)
+            rocks.remove(r)
 
         for bird in birds:
             if bird.y + bird.img.get_height() - 10 >= 690 or bird.y < -50:
@@ -152,7 +152,7 @@ def eval_genomes(genomes, config):
                 ge.pop(birds.index(bird))
                 birds.pop(birds.index(bird))
 
-        ai_window(win, birds, pipes, base, score, high, gen, full_size)
+        ai_window(win, birds, rocks, base, score, high, gen, full_size)
 
         # break if score gets large enough
         if score == 20:
