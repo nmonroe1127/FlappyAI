@@ -54,7 +54,7 @@ def ai_window(win, birds, pipes, base, score, high, gen, full_size):
 
 
 # This will hold the code for watching the AI learn
-def eval_genomes(self, genomes, config, generations):
+def eval_genomes(genomes, config):
     global WIN, gen
     win = WIN
     gen += 1

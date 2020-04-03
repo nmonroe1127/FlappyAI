@@ -53,7 +53,7 @@ def ai_window(win, birds, pipes, base, score, high, gen, full_size):
 
 
 # This will hold the code for watching the AI learn
-def eval_genomes(self, genomes, config, generations):
+def eval_genomes(genomes, config):
     """
         runs the simulation of the current population of
         birds and sets their fitness based on the distance they
