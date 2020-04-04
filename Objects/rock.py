@@ -32,7 +32,7 @@ class Rock:
         self.set_height()
 
     def set_height(self):
-        self.height = random.randrange(100, 450)
+        self.height = random.randrange(100, 400)
         # Drawing the rock at a negative location so that there is room for plane to go through
         self.top = self.height - self.ROCK_TOP.get_height()
         self.bottom = self.height + self.GAP

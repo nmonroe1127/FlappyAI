@@ -37,23 +37,23 @@ def menu_window(win, plane, plane2, plane3, plane4, base, start_button1, start_b
     # Draw da buttons
     pygame.draw.rect(win, (30, 30, 30), start_button1)
     # Give the button some text
-    start1 = pygame.font.SysFont('Times New Roman', 15).render("Play Game", 1, (255, 255, 255))
-    win.blit(start1, (217, 290))
+    start1 = pygame.font.SysFont('Times New Roman', 18).render("Play Game", 1, (255, 255, 255))
+    win.blit(start1, (210, 275))
     # Draw da buttons
     pygame.draw.rect(win, (30, 30, 30), start_button2)
     # Give the button some text
-    start2 = pygame.font.SysFont('Times New Roman', 15).render("Watch AI Play", 1, (255, 255, 255))
-    win.blit(start2, (205, 390))
+    start2 = pygame.font.SysFont('Times New Roman', 18).render("Watch AI Play", 1, (255, 255, 255))
+    win.blit(start2, (195, 355))
     # Draw da buttons
     pygame.draw.rect(win, (30, 30, 30), start_button3)
     # Give the button some text
-    start3 = pygame.font.SysFont('Times New Roman', 15).render("Watch Trained AI", 1, (255, 255, 255))
-    win.blit(start3, (197, 490))
+    start3 = pygame.font.SysFont('Times New Roman', 18).render("Watch Trained AI", 1, (255, 255, 255))
+    win.blit(start3, (183, 435))
     # Draw da buttons
     pygame.draw.rect(win, (30, 30, 30), start_button4)
     # Give the button some text
-    start3 = pygame.font.SysFont('Times New Roman', 15).render("Play Against AI", 1, (255, 255, 255))
-    win.blit(start3, (197, 590))
+    start3 = pygame.font.SysFont('Times New Roman', 18).render("Play Against AI", 1, (255, 255, 255))
+    win.blit(start3, (190, 515))
     # Updates the window with new visuals every frame
     pygame.display.update()
 
@@ -73,10 +73,10 @@ def main():
     win = pygame.display.set_mode((500, 800))
     clock = pygame.time.Clock()
 
-    start_button1 = pygame.Rect(192, 285, 117, 30)
-    start_button2 = pygame.Rect(192, 385, 117, 30)
-    start_button3 = pygame.Rect(192, 485, 117, 30)
-    start_button4 = pygame.Rect(192, 585, 117, 30)
+    start_button1 = pygame.Rect(180, 265, 134, 45)
+    start_button2 = pygame.Rect(180, 345, 134, 45)
+    start_button3 = pygame.Rect(180, 425, 134, 45)
+    start_button4 = pygame.Rect(180, 505, 134, 45)
 
     # Make the bird move as it waits for the user to start the game
     wait = True

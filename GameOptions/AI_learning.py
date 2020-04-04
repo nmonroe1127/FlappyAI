@@ -12,7 +12,7 @@ from Objects.rock import Rock
 from Objects.base import Base
 
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("Images", "background.png")))
-
+menu = True
 pygame.font.init()
 
 STAT_FONT = pygame.font.SysFont("comicsans", 50)
@@ -49,6 +49,20 @@ def ai_window(win, birds, rocks, base, score, high, gen, full_size):
     # Calls the helper function to actually draw the birdy
     for bird in birds:
         bird.draw(win)
+
+    stop = pygame.Rect(10, 85, 50, 30)
+    pygame.draw.rect(win, (30, 30, 30), stop)
+    back = pygame.font.SysFont('Times New Roman', 19).render("Stop", 1, (255, 255, 255))
+    win.blit(back, (15, 90))
+    global menu
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if stop.collidepoint(event.pos):
+                    menu = False
+
     # Updates the window with new visuals every frame
     pygame.display.update()
 
@@ -91,7 +105,8 @@ def eval_genomes(genomes, config):
     run = True
     while run and len(birds) > 0:
         clock.tick(30)
-
+        if menu == False:
+            run = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -358,23 +373,26 @@ def configuration(population_size, generations):
 
 # Option button 1, regular game for the user to play
 def option_two(win):
+    global menu
+    menu = True
     # Let user choose what they finnna do
     #user_inputs()
     # Configuration(population, generations)
     configuration(15, 5)
-    restart_game = pygame.Rect(192, 220, 117, 30)
+
+    restart_game = pygame.Rect(180, 265, 134, 45)
     # Draw da buttons
     pygame.draw.rect(win, (30, 30, 30), restart_game)
     # Give the button some text
-    restart = BUTTON_FONT.render("Restart Game", 1, (255, 255, 255))
-    win.blit(restart, (210, 225))
+    restart = pygame.font.SysFont('Times New Roman', 18).render("Restart Game", 1, (255, 255, 255))
+    win.blit(restart, (200, 275))
 
-    back_to_menu = pygame.Rect(192, 320, 117, 30)
+    back_to_menu = pygame.Rect(180, 345, 134, 45)
     # Draw da buttons
     pygame.draw.rect(win, (30, 30, 30), back_to_menu)
     # Give the button some text
-    back = BUTTON_FONT.render("Back To Menu", 1, (255, 255, 255))
-    win.blit(back, (205, 325))
+    back = pygame.font.SysFont('Times New Roman', 18).render("Back To Menu", 1, (255, 255, 255))
+    win.blit(back, (195, 355))
     # Updates the window with new visuals every frame
     pygame.display.update()
 
@@ -394,4 +412,5 @@ def option_two(win):
                     elif back_to_menu.collidepoint(event.pos):
                         # Whenever you want to watch the AI learn
                         wait = False
+                        break
 

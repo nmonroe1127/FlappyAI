@@ -228,19 +228,19 @@ def option_four(win):
     plane = UserPlane(200, 350)
     configuration(plane)
 
-    restart_game = pygame.Rect(192, 220, 117, 30)
+    restart_game = pygame.Rect(180, 265, 134, 45)
     # Draw da buttons
     pygame.draw.rect(win, (30, 30, 30), restart_game)
     # Give the button some text
-    restart = BUTTON_FONT.render("Restart Game", 1, (255, 255, 255))
-    win.blit(restart, (210, 225))
+    restart = pygame.font.SysFont('Times New Roman', 18).render("Restart Game", 1, (255, 255, 255))
+    win.blit(restart, (200, 275))
 
-    back_to_menu = pygame.Rect(192, 320, 117, 30)
+    back_to_menu = pygame.Rect(180, 345, 134, 45)
     # Draw da buttons
     pygame.draw.rect(win, (30, 30, 30), back_to_menu)
     # Give the button some text
-    back = BUTTON_FONT.render("Back To Menu", 1, (255, 255, 255))
-    win.blit(back, (205, 325))
+    back = pygame.font.SysFont('Times New Roman', 18).render("Back To Menu", 1, (255, 255, 255))
+    win.blit(back, (195, 355))
 
     clock = pygame.time.Clock()
     i = 0
@@ -268,3 +268,4 @@ def option_four(win):
                     elif back_to_menu.collidepoint(event.pos):
                         # Whenever you want to watch the AI learn
                         wait = False
+                        break
