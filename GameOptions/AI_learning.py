@@ -408,7 +408,7 @@ def option_two(win):
                 if event.button == 1:
                     if restart_game.collidepoint(event.pos):
                         # Whenever just the player is playing
-                        option_two()
+                        option_two(win)
                     elif back_to_menu.collidepoint(event.pos):
                         # Whenever you want to watch the AI learn
                         wait = False
