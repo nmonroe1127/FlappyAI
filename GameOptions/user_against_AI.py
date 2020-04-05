@@ -30,7 +30,7 @@ WIN = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 gen = 0
 
 
-def ai_window(win, bird, plane, rockvs, base, score, high):
+def ai_window(win, planeAI, plane, rockvs, base, score, high):
     # .blit() is basically just draw for pygame
     # Place the background image center on the screen or (0,0) due to Pygame orientation
     win.blit(BG_IMG, (0, 0))
@@ -45,14 +45,14 @@ def ai_window(win, bird, plane, rockvs, base, score, high):
     win.blit(score, (WIN_WIDTH - 10 - score.get_width(), 45))
     # call the method that will draw the ground into the game
     base.draw(win)
-    # Calls the helper function to actually draw the birdy
-    bird.draw(win)
+    # Calls the helper function to actually draw the planeAI
+    planeAI.draw(win)
     plane.draw(win)
     # Updates the window with new visuals every frame
     pygame.display.update()
 
 
-def draw_window(win, plane, bird, rocks, base, score, high):
+def draw_window(win, plane, plane2, plane3, plane4, planeAI, rocks, base, score, high):
     # .blit() is basically just draw for pygame
     # Place the background image center on the screen or (0,0) due to Pygame orientation
     win.blit(BG_IMG, (0, 0))
@@ -68,22 +68,25 @@ def draw_window(win, plane, bird, rocks, base, score, high):
     # call the method that will draw the ground into the game
     base.draw(win)
     # Draw the AI
-    bird.draw(win)
-    # Calls the helper function to actually draw the birdy
+    planeAI.draw(win)
+    # Calls the helper function to actually draw the planeAI
     plane.draw(win)
+    plane2.draw2(win)
+    plane3.draw2(win)
+    plane4.draw3(win)
     # Updates the window with new visuals every frame
     pygame.display.update()
 
 
 # This will hold the code for watching the AI learn
-def user_vs_AI(config, plane):
+def user_vs_AI(config, plane, plane2, plane3, plane4):
     base = Base(690)
     rocks = [Rock(700)]
 
     # Setup the AI plane
     with open('./AIConfigurations/config-best.txt', 'rb') as f:
         c = pickle.load(f)
-    bird = AIPlane(200, 350)
+    planeAI = AIPlane(200, 350)
     net = FeedForwardNetwork.create(c, config)
 
     win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
@@ -95,11 +98,11 @@ def user_vs_AI(config, plane):
     except:
         high = 0
 
-    # Make the bird move as it waits for the user to start the game
+    # Make the planeAI move as it waits for the user to start the game
     wait = True
     while wait:
         clock.tick(30)
-        # Moving and jumping of the bird
+        # Moving and jumping of the planeAI
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -107,17 +110,17 @@ def user_vs_AI(config, plane):
                 plane.jump()
                 wait = False
         base.move()
-        draw_window(win, plane, bird, rocks, base, 0, high)
+        draw_window(win, plane, plane2, plane3, plane4, planeAI, rocks, base, 0, high)
 
     # Keep track of how many rocks have been passed
     score = 0
-    # will run until birdy dies by the rock or the ground
+    # will run until planeAI dies by the rock or the ground
     run = True
     fall = True
     while run:
         clock.tick(30)
 
-        # Moving and jumping of the bird
+        # Moving and jumping of the planeAI
         plane.move()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -126,32 +129,32 @@ def user_vs_AI(config, plane):
                 plane.jump()
 
         rock_ind = 0
-        if len(rocks) > 1 and bird.x > rocks[0].x + rocks[0].ROCK_TOP.get_width():  # determine whether to use the first or second
+        if len(rocks) > 1 and planeAI.x > rocks[0].x + rocks[0].ROCK_TOP.get_width():  # determine whether to use the first or second
             rock_ind = 1  # rock on the screen for neural network input
 
-        bird.move()
+        planeAI.move()
 
-        # send bird location, top rock location and bottom rock location and determine from network whether to jump or not
+        # send planeAI location, top rock location and bottom rock location and determine from network whether to jump or not
         output = net.activate(
-            (bird.y, abs(bird.y - rocks[rock_ind].height), abs(bird.y - rocks[rock_ind].bottom)))
+            (planeAI.y, abs(planeAI.y - rocks[rock_ind].height), abs(planeAI.y - rocks[rock_ind].bottom)))
 
         if output[0] > 0.5:  # we use a tanh activation function so result will be between -1 and 1. if over 0.5 jump
-            bird.jump()
+            planeAI.jump()
 
         # Array to hold rocks that have left the screen and need to be removed
         rem = []
         # Only add passed rocks
         add_rock = False
         for rock in rocks:
-            # If a bird pixels touches a rock pixel the bird will die
+            # If a planeAI pixels touches a rock pixel the planeAI will die
             if rock.collide(plane):
                 run = False
-            if rock.collide(bird):
+            if rock.collide(planeAI):
                 run = False
             # If rock is completely off the screen
             if rock.x + rock.ROCK_TOP.get_width() < 0:
                 rem.append(rock)
-                # This will check if the bird has passed the rock
+                # This will check if the planeAI has passed the rock
             if not rock.passed and rock.x < plane.x:
                 rock.passed = True
                 add_rock = True
@@ -167,11 +170,11 @@ def user_vs_AI(config, plane):
         for r in rem:
             rocks.remove(r)
 
-        # If the bird hits the ground
+        # If the planeAI hits the ground
         if plane.y + plane.img.get_height() >= 730:
             run = False
 
-        if bird.y + bird.img.get_height() >= 730:
+        if planeAI.y + planeAI.img.get_height() >= 730:
             run = False
 
         if run == False:
@@ -187,46 +190,49 @@ def user_vs_AI(config, plane):
                     if i == 4:
                         i = 0
                     pygame.display.update()
-                    draw_window(win, plane, bird, rocks, base, score, high)
-                elif bird.y + bird.img.get_height() < 780:
-                    bird.move()
+                    draw_window(win, plane, plane2, plane3, plane4, planeAI, rocks, base, score, high)
+                elif planeAI.y + planeAI.img.get_height() < 780:
+                    planeAI.move()
                     i = 0
-                    win.blit(FIRE_IMGS[i], (bird.x, bird.y))
+                    win.blit(FIRE_IMGS[i], (planeAI.x, planeAI.y))
                     i += 1
                     if i == 4:
                         i = 0
                     pygame.display.update()
-                    draw_window(win, plane, bird, rocks, base, score, high)
+                    draw_window(win, plane, plane2, plane3, plane4, planeAI, rocks, base, score, high)
 
         base.move()
-        draw_window(win, plane, bird, rocks, base, score, high)
+        draw_window(win, plane, plane2, plane3, plane4, planeAI, rocks, base, score, high)
 
     # Save the highest score of the session to file for later
     with open('./HighScoreFiles/highscores.dat', 'wb') as file:
         pickle.dump(high, file)
 
 
-def run(config_path, plane):
+def run(config_path, plane, plane2, plane3 ,plane4):
     # # Defining all of the subheadings found in the config text file
     config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction,
                                 neat.DefaultSpeciesSet, neat.DefaultStagnation,
                                 config_path)
 
-    user_vs_AI(config, plane)
+    user_vs_AI(config, plane, plane2, plane3, plane4)
 
 
-def configuration(plane):
+def configuration(plane, plane2, plane3, plane4):
     # Finding the file that will hold the neural network and GA configurations
     local_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "AIConfigurations")
     config_path = os.path.join(local_dir, "config-single.txt")
     # Run the file that contains the neural network configurations
-    run(config_path, plane)
+    run(config_path, plane, plane2, plane3, plane4)
 
 
 # Option button 1, regular game for the user to play
 def option_four(win):
     plane = UserPlane(200, 350)
-    configuration(plane)
+    plane2 = UserPlane(30, 30)
+    plane3 = UserPlane(50, 70)
+    plane4 = UserPlane(80, 50)
+    configuration(plane, plane2, plane3, plane4)
 
     restart_game = pygame.Rect(180, 265, 134, 45)
     # Draw da buttons
@@ -255,7 +261,7 @@ def option_four(win):
         # Updates the window with new visuals every frame
         pygame.display.update()
 
-        # Moving and jumping of the bird
+        # Moving and jumping of the planeAI
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()

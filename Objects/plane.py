@@ -5,9 +5,18 @@ import time
 PLANE_IMGS = [pygame.transform.scale(pygame.image.load(os.path.join("Images", "plane1.png")), (65, 65)),
               pygame.transform.scale(pygame.image.load(os.path.join("Images", "plane2.png")), (65, 65)),
               pygame.transform.scale(pygame.image.load(os.path.join("Images", "plane3.png")), (65, 65))]
+
+PLANE_IMGSSMALL = [pygame.transform.scale(pygame.image.load(os.path.join("Images", "plane1.png")), (25, 25)),
+              pygame.transform.scale(pygame.image.load(os.path.join("Images", "plane2.png")), (25, 25)),
+              pygame.transform.scale(pygame.image.load(os.path.join("Images", "plane3.png")), (25, 25))]
+
 PLANE_IMGS2 = [pygame.transform.scale(pygame.image.load(os.path.join("Images", "planeRed1.png")), (65, 65)),
                pygame.transform.scale(pygame.image.load(os.path.join("Images", "planeRed2.png")), (65, 65)),
                pygame.transform.scale(pygame.image.load(os.path.join("Images", "planeRed3.png")), (65, 65))]
+
+PLANE_IMGSSMALLRED = [pygame.transform.scale(pygame.image.load(os.path.join("Images", "planeRed1.png")), (20, 20)),
+               pygame.transform.scale(pygame.image.load(os.path.join("Images", "planeRed2.png")), (20, 20)),
+               pygame.transform.scale(pygame.image.load(os.path.join("Images", "planeRed3.png")), (20, 20))]
 
 
 class AIPlane:
@@ -68,7 +77,7 @@ class AIPlane:
             # Making sure plane doesnt tilt in a bad direction
             if self.tilt < self.MAX_ROTATION:
                 self.tilt = self.MAX_ROTATION
-        # Else if we are going downwards, the bird should be tilted in a downwards direction
+        # Else if we are going downwards, the plane should be tilted in a downwards direction
         else:
             # Rotates the flappy plane completely 90 degrees so it appears to be nosediving
             if self.tilt > -90:
@@ -106,7 +115,7 @@ class AIPlane:
             # Keep the counter so that the plane wont skip a frame when it goes back up
             self.img_count = self.ANIMATION_TIME * 2
 
-        # Rotate an image around its center in Pygame (tilt the birdy)
+        # Rotate an image around its center in Pygame (tilt the plane)
         # https://stackoverflow.com/questions/4183208/how-do-i-rotate-an-image-around-its-center-using-pygame
         rotated_image = pygame.transform.rotate(self.img, self.tilt)
         # Not sure how this works entirely, got motivation for it from stack overflow
@@ -144,7 +153,7 @@ class AIPlane:
         #     self.img = self.IMGS[0]
         #     self.img_count = 0
 
-        # Rotate an image around its center in Pygame (tilt the birdy)
+        # Rotate an image around its center in Pygame (tilt the plane)
         # https://stackoverflow.com/questions/4183208/how-do-i-rotate-an-image-around-its-center-using-pygame
         rotated_image = pygame.transform.rotate(self.img, self.tilt)
 
@@ -177,6 +186,8 @@ class AIPlane:
 class UserPlane:
     # Holds all of the plane state images
     IMGS = PLANE_IMGS
+    IMGSSMALL = PLANE_IMGSSMALL 
+    IMGSSMALLRED = PLANE_IMGSSMALLRED
     # How much plane will tilt
     MAX_ROTATION = 25
     # How many frames the plane will rotate in each spin
@@ -232,11 +243,55 @@ class UserPlane:
             # Making sure plane doesnt tilt in a bad direction
             if self.tilt < self.MAX_ROTATION:
                 self.tilt = self.MAX_ROTATION
-        # Else if we are going downwards, the bird should be tilted in a downwards direction
+        # Else if we are going downwards, the plane should be tilted in a downwards direction
         else:
             # Rotates the flappy plane completely 90 degrees so it appears to be nosediving
             if self.tilt > -90:
                 self.tilt -= self.ROT_VEL
+
+    def draw2(self, win):
+        self.img_count += 1
+
+        if self.img_count < self.ANIMATION_TIME:
+            self.img = self.IMGSSMALL[0]
+        elif self.img_count < self.ANIMATION_TIME * 2:
+            self.img = self.IMGSSMALL[1]
+        elif self.img_count < self.ANIMATION_TIME * 3:
+            self.img = self.IMGSSMALL[2]
+        elif self.img_count < self.ANIMATION_TIME * 4:
+            self.img = self.IMGSSMALL[1]
+        elif self.img_count == self.ANIMATION_TIME * 4 + 1:
+            self.img = self.IMGSSMALL[0]
+            self.img_count = 0
+        if self.tilt <= -80:
+            self.img = self.IMGSSMALL[1]
+            self.img_count = self.ANIMATION_TIME * 2
+
+        rotated_image = pygame.transform.rotate(self.img, self.tilt)
+        new_rect = rotated_image.get_rect(center=self.img.get_rect(topleft=(self.x, self.y)).center)
+        win.blit(rotated_image, new_rect.topleft)
+
+    def draw3(self, win):
+        self.img_count += 1
+
+        if self.img_count < self.ANIMATION_TIME:
+            self.img = self.IMGSSMALLRED[0]
+        elif self.img_count < self.ANIMATION_TIME * 2:
+            self.img = self.IMGSSMALLRED[1]
+        elif self.img_count < self.ANIMATION_TIME * 3:
+            self.img = self.IMGSSMALLRED[2]
+        elif self.img_count < self.ANIMATION_TIME * 4:
+            self.img = self.IMGSSMALLRED[1]
+        elif self.img_count == self.ANIMATION_TIME * 4 + 1:
+            self.img = self.IMGSSMALLRED[0]
+            self.img_count = 0
+        if self.tilt <= -80:
+            self.img = self.IMGSSMALLRED[1]
+            self.img_count = self.ANIMATION_TIME * 2
+
+        rotated_image = pygame.transform.rotate(self.img, self.tilt)
+        new_rect = rotated_image.get_rect(center=self.img.get_rect(topleft=(self.x, self.y)).center)
+        win.blit(rotated_image, new_rect.topleft)
 
     # win is the window the plane is being drawn onto
     def draw(self, win):
@@ -262,15 +317,7 @@ class UserPlane:
             self.img = self.IMGS[0]
             self.img_count = 0
 
-        # This makes sure that the plane is not spinning propeller when it is going down
-        # (plane propellers dont spin when they fail, they just die)
-        if self.tilt <= -80:
-            # Show the image when the plane is just level
-            self.img = self.IMGS[1]
-            # Keep the counter so that the plane wont skip a frame when it goes back up
-            self.img_count = self.ANIMATION_TIME * 2
-
-        # Rotate an image around its center in Pygame (tilt the birdy)
+        # Rotate an image around its center in Pygame (tilt the plane)
         # https://stackoverflow.com/questions/4183208/how-do-i-rotate-an-image-around-its-center-using-pygame
         rotated_image = pygame.transform.rotate(self.img, self.tilt)
         # Not sure how this works entirely, got motivation for it from stack overflow
@@ -308,7 +355,7 @@ class UserPlane:
         #     self.img = self.IMGS[0]
         #     self.img_count = 0
 
-        # Rotate an image around its center in Pygame (tilt the birdy)
+        # Rotate an image around its center in Pygame (tilt the plane)
         # https://stackoverflow.com/questions/4183208/how-do-i-rotate-an-image-around-its-center-using-pygame
         rotated_image = pygame.transform.rotate(self.img, self.tilt)
 

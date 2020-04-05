@@ -25,7 +25,7 @@ WIN = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 gen = 0
 
 
-def ai_window(win, birds, rocks, base, score, high, gen, full_size):
+def ai_window(win, planes, rocks, base, score, high, gen, full_size):
     # .blit() is basically just draw for pygame
     # Place the background image center on the screen or (0,0) due to Pygame orientation
     win.blit(BG_IMG, (0, 0))
@@ -42,13 +42,13 @@ def ai_window(win, birds, rocks, base, score, high, gen, full_size):
     score = STAT_FONT.render("Gen: " + str(gen), 1, (0, 0, 0))
     win.blit(score, (10, 10))
     # Render the number of plane left alive
-    score_label = STAT_FONT.render("Alive: " + str(len(birds)) + "/" + str(full_size), 1, (0, 0, 0))
+    score_label = STAT_FONT.render("Alive: " + str(len(planes)) + "/" + str(full_size), 1, (0, 0, 0))
     win.blit(score_label, (10, 50))
     # call the method that will draw the ground into the game
     base.draw(win)
-    # Calls the helper function to actually draw the birdy
-    for bird in birds:
-        bird.draw(win)
+    # Calls the helper function to actually draw the plane
+    for plane in planes:
+        plane.draw(win)
 
     stop = pygame.Rect(10, 85, 50, 30)
     pygame.draw.rect(win, (30, 30, 30), stop)
@@ -72,7 +72,7 @@ def ai_window(win, birds, rocks, base, score, high, gen, full_size):
 def eval_genomes(genomes, config):
     """
         runs the simulation of the current population of
-        birds and sets their fitness based on the distance they
+        planes and sets their fitness based on the distance they
         reach in the game.
         """
     global WIN, gen
@@ -83,19 +83,19 @@ def eval_genomes(genomes, config):
         c = pickle.load(f)
     # start by creating lists holding the genome itself, the
     # neural network associated with the genome and the
-    # bird object that uses that network to play
+    # plane object that uses that network to play
     nets = []
-    birds = []
+    planes = []
     ge = []
     for genome_id, genome in genomes:
         genome.fitness = 0  # start with fitness level of 0
         # net = FeedForwardNetwork.create(genome, config)
         net = FeedForwardNetwork.create(c, config)
         nets.append(net)
-        birds.append(AIPlane(230, 350))
+        planes.append(AIPlane(230, 350))
         ge.append(genome)
 
-    full_size = len(birds)
+    full_size = len(planes)
 
     base = Base(690)
     rocks = [Rock(700)]
@@ -111,7 +111,7 @@ def eval_genomes(genomes, config):
 
 
     run = True
-    while run and len(birds) > 0:
+    while run and len(planes) > 0:
         # clock.tick(30)
         if menu == False:
             run = False
@@ -123,20 +123,20 @@ def eval_genomes(genomes, config):
                 break
 
         rock_ind = 0
-        if len(birds) > 0:
-            if len(rocks) > 1 and birds[0].x > rocks[0].x + rocks[0].ROCK_TOP.get_width():  # determine whether to use the first or second
+        if len(planes) > 0:
+            if len(rocks) > 1 and planes[0].x > rocks[0].x + rocks[0].ROCK_TOP.get_width():  # determine whether to use the first or second
                rock_ind = 1  # rock on the screen for neural network input
 
-        for x, bird in enumerate(birds):  # give each bird a fitness of 0.1 for each frame it stays alive
+        for x, plane in enumerate(planes):  # give each plane a fitness of 0.1 for each frame it stays alive
             ge[x].fitness += 0.1
-            bird.move()
+            plane.move()
 
-            # send bird location, top rock location and bottom rock location and determine from network whether to jump or not
-            output = nets[birds.index(bird)].activate(
-                (bird.y, abs(bird.y - rocks[rock_ind].height), abs(bird.y - rocks[rock_ind].bottom)))
+            # send plane location, top rock location and bottom rock location and determine from network whether to jump or not
+            output = nets[planes.index(plane)].activate(
+                (plane.y, abs(plane.y - rocks[rock_ind].height), abs(plane.y - rocks[rock_ind].bottom)))
 
             if output[0] > 0.5:  # we use a tanh activation function so result will be between -1 and 1. if over 0.5 jump
-                bird.jump()
+                plane.jump()
 
         base.move()
 
@@ -144,17 +144,17 @@ def eval_genomes(genomes, config):
         add_rock = False
         for rock in rocks:
             # check for collision
-            for bird in birds:
-                if rock.collide(bird):
-                    ge[birds.index(bird)].fitness -= 1
-                    nets.pop(birds.index(bird))
-                    ge.pop(birds.index(bird))
-                    birds.pop(birds.index(bird))
+            for plane in planes:
+                if rock.collide(plane):
+                    ge[planes.index(plane)].fitness -= 1
+                    nets.pop(planes.index(plane))
+                    ge.pop(planes.index(plane))
+                    planes.pop(planes.index(plane))
 
             if rock.x + rock.ROCK_TOP.get_width() < 0:
                 rem.append(rock)
 
-            if not rock.passed and rock.x < bird.x:
+            if not rock.passed and rock.x < plane.x:
                 rock.passed = True
                 add_rock = True
             rock.move()
@@ -168,13 +168,13 @@ def eval_genomes(genomes, config):
         for r in rem:
             rocks.remove(r)
 
-        for bird in birds:
-            if bird.y + bird.img.get_height() - 10 >= 690 or bird.y < -50:
-                nets.pop(birds.index(bird))
-                ge.pop(birds.index(bird))
-                birds.pop(birds.index(bird))
+        for plane in planes:
+            if plane.y + plane.img.get_height() - 10 >= 690 or plane.y < -50:
+                nets.pop(planes.index(plane))
+                ge.pop(planes.index(plane))
+                planes.pop(planes.index(plane))
  
-        ai_window(win, birds, rocks, base, score, high, gen, full_size)
+        ai_window(win, planes, rocks, base, score, high, gen, full_size)
 
         # break if score gets large enough
         #if score == 100:
@@ -238,7 +238,7 @@ def option_three(win):
     wait = True
     while wait:
 
-        # Moving and jumping of the bird
+        # Moving and jumping of the plane
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()

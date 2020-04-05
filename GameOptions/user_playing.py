@@ -23,7 +23,7 @@ STAT_FONT = pygame.font.SysFont("comicsans", 50)
 BUTTON_FONT = pygame.font.SysFont('Times New Roman', 15)
 
 
-def draw_window(win, plane, rocks, base, score, high):
+def draw_window(win, plane, plane2, plane3, rocks, base, score, high):
     # .blit() is basically just draw for pygame
     # Place the background image center on the screen or (0,0) due to Pygame orientation
     win.blit(BG_IMG, (0, 0))
@@ -38,13 +38,15 @@ def draw_window(win, plane, rocks, base, score, high):
     win.blit(score, (WIN_WIDTH - 10 - score.get_width(), 45))
     # call the method that will draw the ground into the game
     base.draw(win)
-    # Calls the helper function to actually draw the birdy
+    # Calls the helper function to actually draw the plane
     plane.draw(win)
+    plane2.draw2(win)
+    plane3.draw2(win)
     # Updates the window with new visuals every frame
     pygame.display.update()
 
 
-def player_game(plane):
+def player_game(plane, plane2, plane3):
     base = Base(690)
     rocks = [Rock(700)]
 
@@ -57,11 +59,11 @@ def player_game(plane):
     except:
         high = 0
 
-    # Make the bird move as it waits for the user to start the game
+    # Make the plane move as it waits for the user to start the game
     wait = True
     while wait:
         clock.tick(30)
-        # Moving and jumping of the bird
+        # Moving and jumping of the plane
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -69,17 +71,17 @@ def player_game(plane):
                 plane.jump()
                 wait = False
         base.move()
-        draw_window(win, plane, rocks, base, 0, high)
+        draw_window(win, plane, plane2, plane3, rocks, base, 0, high)
 
     # Keep track of how many rocks have been passed
     score = 0
-    # will run until birdy dies by the rock or the ground
+    # will run until plane dies by the rock or the ground
     run = True
     fall = True
     while run:
         clock.tick(30)
 
-        # Moving and jumping of the bird
+        # Moving and jumping of the plane
         plane.move()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -92,13 +94,13 @@ def player_game(plane):
         # Only add passed rocks
         add_rock = False
         for rock in rocks:
-            # If a bird pixels touches a rock pixel the bird will die
+            # If a plane pixels touches a rock pixel the plane will die
             if rock.collide(plane):
                 run = False
             # If rock is completely off the screen
             if rock.x + rock.ROCK_TOP.get_width() < 0:
                 rem.append(rock)
-                # This will check if the bird has passed the rock
+                # This will check if the plane has passed the rock
             if not rock.passed and rock.x < plane.x:
                 rock.passed = True
                 add_rock = True
@@ -114,7 +116,7 @@ def player_game(plane):
         for r in rem:
             rocks.remove(r)
 
-        # If the bird hits the ground
+        # If the plane hits the ground
         if plane.y + plane.img.get_height() >= 780:
             run = False
 
@@ -131,10 +133,10 @@ def player_game(plane):
                     if i == 4:
                         i = 0
                     pygame.display.update()
-                    draw_window(win, plane, rocks, base, score, high)
+                    draw_window(win, plane, plane2, plane3, rocks, base, score, high)
 
         base.move()
-        draw_window(win, plane, rocks, base, score, high)
+        draw_window(win, plane, plane2, plane3, rocks, base, score, high)
 
     # Save the highest score of the session to file for later
     with open('./HighScoreFiles/highscores.dat', 'wb') as file:
@@ -144,7 +146,9 @@ def player_game(plane):
 # Option button 1, regular game for the user to play
 def option_one(win):
     plane = UserPlane(200, 350)
-    player_game(plane)
+    plane2 = UserPlane(30, 30)
+    plane3 = UserPlane(50, 70)
+    player_game(plane, plane2, plane3)
 
     restart_game = pygame.Rect(180, 265, 134, 45)
     # Draw da buttons
@@ -173,7 +177,7 @@ def option_one(win):
         # Updates the window with new visuals every frame
         pygame.display.update()
 
-        # Moving and jumping of the bird
+        # Moving and jumping of the plane
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -186,4 +190,4 @@ def option_one(win):
                     elif back_to_menu.collidepoint(event.pos):
                         # Whenever you want to watch the AI learn
                         wait = False
-                        break
+                        #break

@@ -78,11 +78,11 @@ def main():
     start_button3 = pygame.Rect(180, 425, 134, 45)
     start_button4 = pygame.Rect(180, 505, 134, 45)
 
-    # Make the bird move as it waits for the user to start the game
+    # Make the plane move as it waits for the user to start the game
     wait = True
     while wait:
         clock.tick(15)
-        # Moving and jumping of the bird
+        # Moving and jumping of the plane
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
