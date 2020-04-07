@@ -62,6 +62,7 @@ def ai_window(win, planes, rocks, base, score, high, gen, full_size):
             if event.button == 1:
                 if stop.collidepoint(event.pos):
                     menu = False
+                    break
 
     # Updates the window with new visuals every frame
     pygame.display.update()
@@ -89,7 +90,7 @@ def eval_genomes(genomes, config):
 
     full_size = len(planes)
 
-    base = Base(690)
+    base = Base(670)
     rocks = [Rock(700)]
     score = 0
 
@@ -106,7 +107,7 @@ def eval_genomes(genomes, config):
     while run and len(planes) > 0:
         clock.tick(30)
         if menu == False:
-            run = False
+            break
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -179,6 +180,8 @@ def eval_genomes(genomes, config):
 
 
 def run(config_path, generations):
+    global gen
+    gen = 0
     # Defining all of the subheadings found in the config text file
     config = neat.config.Config(neat.DefaultGenome,
                                 neat.DefaultReproduction,
@@ -409,6 +412,7 @@ def option_two(win):
                     if restart_game.collidepoint(event.pos):
                         # Whenever just the player is playing
                         option_two(win)
+                        wait = False
                     elif back_to_menu.collidepoint(event.pos):
                         # Whenever you want to watch the AI learn
                         wait = False

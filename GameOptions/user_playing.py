@@ -47,7 +47,7 @@ def draw_window(win, plane, plane2, plane3, rocks, base, score, high):
 
 
 def player_game(plane, plane2, plane3):
-    base = Base(690)
+    base = Base(670)
     rocks = [Rock(700)]
 
     win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
@@ -117,11 +117,11 @@ def player_game(plane, plane2, plane3):
             rocks.remove(r)
 
         # If the plane hits the ground
-        if plane.y + plane.img.get_height() >= 780:
+        if plane.y + plane.img.get_height() >= 780 or plane.y + plane.img.get_height() < -50:
             run = False
 
-        if run == False:
-            while fall == True:
+        if not run:
+            while fall:
                 clock.tick(40)
                 if plane.y + plane.img.get_height() >= 780:
                     fall = False
@@ -163,6 +163,7 @@ def option_one(win):
     # Give the button some text
     back = pygame.font.SysFont('Times New Roman', 18).render("Back To Menu", 1, (255, 255, 255))
     win.blit(back, (195, 355))
+    pygame.display.update()
 
     clock = pygame.time.Clock()
     i = 0
@@ -182,12 +183,12 @@ def option_one(win):
             if event.type == pygame.QUIT:
                 pygame.quit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                # 1 is the left mouse button, 2 is middle, 3 is right.
-                if event.button == 1:
-                    if restart_game.collidepoint(event.pos):
-                        # Whenever just the player is playing
-                        option_one(win)
-                    elif back_to_menu.collidepoint(event.pos):
-                        # Whenever you want to watch the AI learn
-                        wait = False
-                        #break
+
+                if restart_game.collidepoint(event.pos):
+                    # Whenever just the player is playing
+                    option_one(win)
+                    wait = False
+                elif back_to_menu.collidepoint(event.pos):
+                    # Whenever you want to watch the AI learn
+                    wait = False
+                    break

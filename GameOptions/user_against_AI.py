@@ -80,7 +80,7 @@ def draw_window(win, plane, plane2, plane3, plane4, planeAI, rocks, base, score,
 
 # This will hold the code for watching the AI learn
 def user_vs_AI(config, plane, plane2, plane3, plane4):
-    base = Base(690)
+    base = Base(670)
     rocks = [Rock(700)]
 
     # Setup the AI plane
@@ -171,10 +171,10 @@ def user_vs_AI(config, plane, plane2, plane3, plane4):
             rocks.remove(r)
 
         # If the planeAI hits the ground
-        if plane.y + plane.img.get_height() >= 730:
+        if plane.y + plane.img.get_height() >= 730 or plane.y + plane.img.get_height() < -50:
             run = False
 
-        if planeAI.y + planeAI.img.get_height() >= 730:
+        if planeAI.y + planeAI.img.get_height() >= 730 or planeAI.y + planeAI.img.get_height() < -50:
             run = False
 
         if run == False:
@@ -271,6 +271,7 @@ def option_four(win):
                     if restart_game.collidepoint(event.pos):
                         # Whenever just the player is playing
                         option_four(win)
+                        wait = False
                     elif back_to_menu.collidepoint(event.pos):
                         # Whenever you want to watch the AI learn
                         wait = False

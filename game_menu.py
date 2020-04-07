@@ -68,7 +68,7 @@ def main():
     plane3.spin_count = 10
     plane4.spin_count = 31
 
-    base = Base(690)
+    base = Base(670)
 
     win = pygame.display.set_mode((500, 800))
     clock = pygame.time.Clock()

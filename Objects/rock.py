@@ -7,7 +7,7 @@ ROCK_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("Images", "bo
 
 class Rock:
     # Space between two rocks
-    GAP = 200
+    GAP = 150
     # rocks move, not the plane
     VELOCITY = 5
 
@@ -35,7 +35,7 @@ class Rock:
         self.height = random.randrange(100, 400)
         # Drawing the rock at a negative location so that there is room for plane to go through
         self.top = self.height - self.ROCK_TOP.get_height()
-        self.bottom = self.height + self.GAP
+        self.bottom = self.height + self.GAP + 50
 
     # Literally just moving it in x direction
     def move(self):
