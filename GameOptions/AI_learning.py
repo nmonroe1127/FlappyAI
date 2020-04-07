@@ -8,6 +8,7 @@ import pygame.freetype
 from neat.nn import FeedForwardNetwork
 
 from Objects.plane import AIPlane
+from Objects.plane import UserPlane
 from Objects.rock import Rock
 from Objects.base import Base
 
@@ -16,6 +17,7 @@ menu = True
 pygame.font.init()
 
 STAT_FONT = pygame.font.SysFont("comicsans", 50)
+VALUE_FONT = pygame.font.SysFont("comicsans", 35)
 BUTTON_FONT = pygame.font.SysFont('Times New Roman', 15)
 
 WIN_WIDTH = 500
@@ -24,6 +26,11 @@ WIN_HEIGHT = 800
 WIN = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 gen = 0
 
+userGen = 1
+userPop = 2
+
+userChoosing = True
+userContinue = True
 
 def ai_window(win, planes, rocks, base, score, high, gen, full_size):
     # .blit() is basically just draw for pygame
@@ -179,8 +186,8 @@ def eval_genomes(genomes, config):
             pickle.dump(score, file)
 
 
-def run(config_path, generations):
-    global gen
+def run(config_path):
+    global gen, userGen
     gen = 0
     # Defining all of the subheadings found in the config text file
     config = neat.config.Config(neat.DefaultGenome,
@@ -198,11 +205,12 @@ def run(config_path, generations):
     p.add_reporter(stats)
 
     # This will run for however many generations we choose. This case is 50
-    winner = p.run(eval_genomes, generations)
+    winner = p.run(eval_genomes, userGen)
     print('\nBest genome:\n{!s}'.format(winner))
 
 
-def configuration(population_size, generations):
+def configuration():
+    global userPop
     # Finding the file that will hold the neural network and GA configurations
     local_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "AIConfigurations")
     config_path = os.path.join(local_dir, "config-feedforward.txt")
@@ -212,7 +220,7 @@ def configuration(population_size, generations):
     config_file.write("[NEAT]\n")
     config_file.write("fitness_criterion     = max\n")
     config_file.write("fitness_threshold     = 100000\n")
-    config_file.write("pop_size              = " + str(population_size) + "\n")
+    config_file.write("pop_size              = " + str(userPop) + "\n")
     config_file.write("reset_on_extinction   = False\n\n")
 
     # Setting up values for the Default Genome
@@ -287,134 +295,187 @@ def configuration(population_size, generations):
     config_file.close()
 
     # Run the file that contains the neural network configurations
-    run(config_path, generations)
-
-# ######IGNORE THE COMMENTED OUT CODE, IT IS A WORK IN PROGRESS IDEA
-# def menu_window(win, plane, plane2, plane3, plane4, base):
-#     # .blit() is basically just draw for pygame
-#     # Place the background image center on the screen or (0,0) due to Pygame orientation
-#     win.blit(pygame.transform.scale2x(pygame.image.load(os.path.join("Images", "background.png"))), (0, 0))
-#     # call the method that will draw the ground into the game
-#     base.draw(win)
-#     # Calls the helper function to actually draw the plane
-#     plane.draw_spin(win)
-#     # Calls the helper function to actually draw the plane
-#     plane2.draw_spin(win)
-#     # Calls the helper function to actually draw the plane
-#     plane3.draw_spin(win)
-#     # Calls the helper function to actually draw the plane
-#     plane4.draw_spin(win)
-#     # Add Title Image to Game
-#     win.blit(pygame.transform.scale(pygame.image.load(os.path.join("Images", "title.png")), (300, 150)), (100, 105))
-#     # Updates the window with new visuals every frame
-#     pygame.display.update()
+    run(config_path)
 
 
-# def user_inputs():
-#     plane = Plane(220, 570)
-#     plane2 = Plane(220, 50)
-#     plane3 = Plane(380, 330)
-#     plane4 = Plane(60, 290)
-#     plane.spin_count = 0
-#     plane2.spin_count = 21
-#     plane3.spin_count = 10
-#     plane4.spin_count = 31
-#
-#     base = Base(690)
-#
-#     win = pygame.display.set_mode((500, 800))
-#     clock = pygame.time.Clock()
-#
-#     win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
-#     population = 0
-#     # Let the user increment the size of population to be used
-#     increment_pop = pygame.Rect(192, 220, 20, 20)
-#     # Draw da buttons
-#     pygame.draw.rect(win, (30, 30, 30), increment_pop)
-#     # Give the button some text
-#     increment = STAT_FONT.render("+", 1, (255, 255, 255))
-#     win.blit(increment, (210, 225))
-#
-#     # Let the user decrement the size of population to be used
-#     decrement_pop = pygame.Rect(192, 220, 117, 30)
-#     # Draw da buttons
-#     pygame.draw.rect(win, (30, 30, 30), decrement_pop)
-#     # Give the button some text
-#     decrement = STAT_FONT.render("-", 1, (255, 255, 255))
-#     win.blit(decrement, (320, 225))
-#
-#
-#     back_to_menu = pygame.Rect(192, 320, 117, 30)
-#     # Draw da buttons
-#     pygame.draw.rect(win, (30, 30, 30), back_to_menu)
-#     # Give the button some text
-#     back = BUTTON_FONT.render("Back To Menu", 1, (255, 255, 255))
-#     win.blit(back, (205, 325))
-#     # Updates the window with new visuals every frame
-#
-#     # Make the plane move as it waits for the user to start the game
-#     wait = True
-#     while wait:
-#         clock.tick(15)
-#         # Moving and jumping of the plane
-#         for event in pygame.event.get():
-#             if event.type == pygame.QUIT:
-#                 pygame.quit()
-#             elif event.type == pygame.MOUSEBUTTONDOWN:
-#                 # 1 is the left mouse button, 2 is middle, 3 is right.
-#                 if event.button == 1:
-#                     if increment_pop.collidepoint(event.pos):
-#                         pass
-#                     elif decrement_pop.collidepoint(event.pos):
-#                         pass
-#                     elif back_to_menu.collidepoint(event.pos):
-#                         pass
-#
-#         base.move()
-#         menu_window(win, plane, plane2, plane3, plane4, base)
+######IGNORE THE COMMENTED OUT CODE, IT IS A WORK IN PROGRESS IDEA
+def menu_window(win, plane, plane2, plane3, plane4, base):
+    global userGen, userPop, userChoosing, userContinue
+    # .blit() is basically just draw for pygame
+    # Place the background image center on the screen or (0,0) due to Pygame orientation
+    win.blit(pygame.transform.scale2x(pygame.image.load(os.path.join("Images", "background.png"))), (0, 0))
+    # call the method that will draw the ground into the game
+    base.draw(win)
+    # Calls the helper function to actually draw the plane
+    plane.draw_spin(win)
+    # Calls the helper function to actually draw the plane
+    plane2.draw_spin(win)
+    # Calls the helper function to actually draw the plane
+    plane3.draw_spin(win)
+    # Calls the helper function to actually draw the plane
+    plane4.draw_spin(win)
+    # Add Title Image to Game
+    win.blit(pygame.transform.scale(pygame.image.load(os.path.join("Images", "title.png")), (300, 150)), (100, 105))
 
-
-# Option button 1, regular game for the user to play
-def option_two(win):
-    global menu
-    menu = True
-    # Let user choose what they finnna do
-    #user_inputs()
-    # Configuration(population, generations)
-    configuration(15, 5)
-
-    restart_game = pygame.Rect(180, 265, 134, 45)
+    # Let the user increment the size of population to be used
+    increment_pop = pygame.Rect(275, 265, 40, 40)
     # Draw da buttons
-    pygame.draw.rect(win, (30, 30, 30), restart_game)
+    pygame.draw.rect(win, (30, 30, 30), increment_pop)
     # Give the button some text
-    restart = pygame.font.SysFont('Times New Roman', 18).render("Restart Game", 1, (255, 255, 255))
-    win.blit(restart, (200, 275))
+    increment = STAT_FONT.render("+", 1, (255, 255, 255))
+    win.blit(increment, (285, 265))
 
-    back_to_menu = pygame.Rect(180, 345, 134, 45)
+    decrement_pop = pygame.Rect(180, 265, 40, 40)
+    # Draw da buttons
+    pygame.draw.rect(win, (30, 30, 30), decrement_pop)
+    # Give the button some text
+    decrement = STAT_FONT.render("-", 1, (255, 255, 255))
+    win.blit(decrement, (195, 265))
+
+    # value_pop = pygame.Rect(225, 265, 40, 40)
+    # # Draw da buttons
+    # pygame.draw.rect(win, (30, 30, 30), value_pop)
+    # # Give the button some text
+    value = VALUE_FONT.render(str(userPop), 1, (0, 0, 0))
+    win.blit(value, (235, 270))
+
+    # Let the user increment the size of population to be used
+    increment_gen = pygame.Rect(275, 325, 40, 40)
+    # Draw da buttons
+    pygame.draw.rect(win, (30, 30, 30), increment_gen)
+    # Give the button some text
+    increment2 = STAT_FONT.render("+", 1, (255, 255, 255))
+    win.blit(increment2, (285, 325))
+
+    decrement_gen = pygame.Rect(180, 325, 40, 40)
+    # Draw da buttons
+    pygame.draw.rect(win, (30, 30, 30), decrement_gen)
+    # Give the button some text
+    decrement2 = STAT_FONT.render("-", 1, (255, 255, 255))
+    win.blit(decrement2, (195, 325))
+
+    # value_pop = pygame.Rect(225, 265, 40, 40)
+    # # Draw da buttons
+    # pygame.draw.rect(win, (30, 30, 30), value_pop)
+    # # Give the button some text
+    value2 = VALUE_FONT.render(str(userGen), 1, (0, 0, 0))
+    win.blit(value2, (235, 325))
+
+    start_game = pygame.Rect(180, 385, 134, 45)
+    # Draw da buttons
+    pygame.draw.rect(win, (30, 30, 30), start_game)
+    # Give the button some text
+    start = pygame.font.SysFont('Times New Roman', 18).render("Start Game", 1, (255, 255, 255))
+    win.blit(start, (195, 395))
+
+    back_to_menu = pygame.Rect(180, 440, 134, 45)
     # Draw da buttons
     pygame.draw.rect(win, (30, 30, 30), back_to_menu)
     # Give the button some text
     back = pygame.font.SysFont('Times New Roman', 18).render("Back To Menu", 1, (255, 255, 255))
-    win.blit(back, (195, 355))
+    win.blit(back, (195, 445))
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            # 1 is the left mouse button, 2 is middle, 3 is right.
+            if event.button == 1:
+                if increment_pop.collidepoint(event.pos):
+                    userPop += 1
+                elif decrement_pop.collidepoint(event.pos):
+                    if userPop > 2:
+                        userPop -= 1
+                elif increment_gen.collidepoint(event.pos):
+                    userGen += 1
+                elif decrement_gen.collidepoint(event.pos):
+                    if userGen > 1:
+                        userGen -= 1
+                elif start_game.collidepoint(event.pos):
+                    configuration()
+                    userContinue = False
+                elif back_to_menu.collidepoint(event.pos):
+                    userChoosing = False
+                    userContinue = False
     # Updates the window with new visuals every frame
     pygame.display.update()
 
-    wait = True
-    while wait:
 
+def user_inputs():
+    global userGen, userPop, userChoosing, userContinue
+    userGen = 5
+    userPop = 10
+
+    plane = UserPlane(220, 570)
+    plane2 = UserPlane(220, 50)
+    plane3 = UserPlane(380, 330)
+    plane4 = UserPlane(60, 290)
+    plane.spin_count = 0
+    plane2.spin_count = 21
+    plane3.spin_count = 10
+    plane4.spin_count = 31
+
+    base = Base(670)
+
+    clock = pygame.time.Clock()
+    win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+
+    # Make the plane move as it waits for the user to start the game
+    userChoosing = True
+    userContinue = True
+    while userChoosing and userContinue:
+        clock.tick(15)
         # Moving and jumping of the plane
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                # 1 is the left mouse button, 2 is middle, 3 is right.
-                if event.button == 1:
-                    if restart_game.collidepoint(event.pos):
-                        # Whenever just the player is playing
-                        option_two(win)
-                        wait = False
-                    elif back_to_menu.collidepoint(event.pos):
-                        # Whenever you want to watch the AI learn
-                        wait = False
-                        break
+
+        base.move()
+        menu_window(win, plane, plane2, plane3, plane4, base)
+
+
+# Option button 1, regular game for the user to play
+def option_two(win):
+    global menu, userChoosing, userContinue
+    menu = True
+    # Let user choose what they finnna do
+    user_inputs()
+    wait = True
+    # Configuration(population, generations)
+    # configuration(15, 5)
+    if userChoosing or userContinue:
+        restart_game = pygame.Rect(180, 265, 134, 45)
+        # Draw da buttons
+        pygame.draw.rect(win, (30, 30, 30), restart_game)
+        # Give the button some text
+        restart = pygame.font.SysFont('Times New Roman', 18).render("Restart Game", 1, (255, 255, 255))
+        win.blit(restart, (200, 275))
+
+        back_to_menu = pygame.Rect(180, 345, 134, 45)
+        # Draw da buttons
+        pygame.draw.rect(win, (30, 30, 30), back_to_menu)
+        # Give the button some text
+        back = pygame.font.SysFont('Times New Roman', 18).render("Back To Menu", 1, (255, 255, 255))
+        win.blit(back, (195, 355))
+        # Updates the window with new visuals every frame
+        pygame.display.update()
+
+        wait = True
+        while wait:
+
+            # Moving and jumping of the plane
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    # 1 is the left mouse button, 2 is middle, 3 is right.
+                    if event.button == 1:
+                        if restart_game.collidepoint(event.pos):
+                            # Whenever just the player is playing
+                            option_two(win)
+                            wait = False
+                        elif back_to_menu.collidepoint(event.pos):
+                            # Whenever you want to watch the AI learn
+                            wait = False
+                            break
 

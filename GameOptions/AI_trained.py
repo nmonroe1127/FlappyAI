@@ -48,21 +48,10 @@ def ai_window(win, plane, rocks, base, score, high, gen, full_size, alive):
     base.draw(win)
     # Calls the helper function to actually draw the plane
     plane.draw(win)
-
     stop = pygame.Rect(10, 85, 50, 30)
     pygame.draw.rect(win, (30, 30, 30), stop)
     back = pygame.font.SysFont('Times New Roman', 19).render("Stop", 1, (255, 255, 255))
     win.blit(back, (15, 90))
-    global menu
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if stop.collidepoint(event.pos):
-                menu = False
-                break
-
-
     # Updates the window with new visuals every frame
     pygame.display.update()
 
@@ -101,6 +90,12 @@ def eval_genomes(config):
     except:
         high = 0
 
+    stop = pygame.Rect(10, 85, 50, 30)
+    pygame.draw.rect(win, (30, 30, 30), stop)
+    back = pygame.font.SysFont('Times New Roman', 19).render("Stop", 1, (255, 255, 255))
+    win.blit(back, (15, 90))
+    global menu
+
     run = True
     while run:
         clock.tick(30)
@@ -113,6 +108,10 @@ def eval_genomes(config):
                 pygame.quit()
                 quit()
                 break
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if stop.collidepoint(event.pos):
+                    menu = False
+                    break
 
         rock_ind = 0
         if len(rocks) > 1 and plane.x > rocks[0].x + rocks[
@@ -159,7 +158,6 @@ def eval_genomes(config):
 
         ai_window(win, plane, rocks, base, score, high, gen, full_size, alive)
 
-    # print(score)
     # Save the highest score of the session to file for later
     if high < score:
         with open('./HighScoreFiles/AI_highscores.dat', 'wb') as file:
