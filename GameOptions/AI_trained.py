@@ -24,7 +24,6 @@ WIN_HEIGHT = 800
 WIN = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 gen = 0
 
-
 def ai_window(win, plane, rocks, base, score, high, gen, full_size, alive):
     # .blit() is basically just draw for pygame
     # Place the background image center on the screen or (0,0) due to Pygame orientation
@@ -48,13 +47,14 @@ def ai_window(win, plane, rocks, base, score, high, gen, full_size, alive):
     base.draw(win)
     # Calls the helper function to actually draw the plane
     plane.draw(win)
-    stop = pygame.Rect(10, 85, 50, 30)
+
+    stop = pygame.Rect(10, 85, 90, 27)
     pygame.draw.rect(win, (30, 30, 30), stop)
     back = pygame.font.SysFont('Times New Roman', 19).render("Stop", 1, (255, 255, 255))
-    win.blit(back, (15, 90))
+    win.blit(back, (37, 87))
+
     # Updates the window with new visuals every frame
     pygame.display.update()
-
 
 # This will hold the code for watching the AI learn
 def eval_genomes(config):
@@ -225,4 +225,6 @@ def option_three(win):
                         # Whenever you want to watch the AI learn
                         wait = False
                         break
+
+
 

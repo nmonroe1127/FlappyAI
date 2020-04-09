@@ -38,12 +38,12 @@ def menu_window(win, plane, plane2, plane3, plane4, base, start_button1, start_b
     pygame.draw.rect(win, (30, 30, 30), start_button1)
     # Give the button some text
     start1 = pygame.font.SysFont('Times New Roman', 18).render("Play Game", 1, (255, 255, 255))
-    win.blit(start1, (210, 275))
+    win.blit(start1, (211, 275))
     # Draw da buttons
     pygame.draw.rect(win, (30, 30, 30), start_button2)
     # Give the button some text
-    start2 = pygame.font.SysFont('Times New Roman', 18).render("Watch AI Play", 1, (255, 255, 255))
-    win.blit(start2, (195, 355))
+    start2 = pygame.font.SysFont('Times New Roman', 18).render("Watch AI Learn", 1, (255, 255, 255))
+    win.blit(start2, (190, 355))
     # Draw da buttons
     pygame.draw.rect(win, (30, 30, 30), start_button3)
     # Give the button some text

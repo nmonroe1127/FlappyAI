@@ -41,9 +41,9 @@ def draw_window(win, plane, rocks, base, score, high):
     base.draw(win)
     # Calls the helper function to actually draw the plane
     plane.draw(win)
-    # plane2.draw2(win)
-    # plane3.draw2(win)
-    # Updates the window with new visuals every frame
+    #plane2.draw2(win)
+    #plane3.draw2(win)
+    #Updates the window with new visuals every frame
     pygame.display.update()
 
 

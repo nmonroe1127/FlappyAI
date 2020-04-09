@@ -57,10 +57,10 @@ def ai_window(win, planes, rocks, base, score, high, gen, full_size):
     for plane in planes:
         plane.draw(win)
 
-    stop = pygame.Rect(10, 85, 50, 30)
+    stop = pygame.Rect(10, 85, 90, 27)
     pygame.draw.rect(win, (30, 30, 30), stop)
     back = pygame.font.SysFont('Times New Roman', 19).render("Stop", 1, (255, 255, 255))
-    win.blit(back, (15, 90))
+    win.blit(back, (37, 87))
     global menu
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -114,7 +114,8 @@ def eval_genomes(genomes, config):
     while run and len(planes) > 0:
         clock.tick(30)
         if menu == False:
-            break
+          run = False
+          break    
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -366,14 +367,14 @@ def menu_window(win, plane, plane2, plane3, plane4, base):
     pygame.draw.rect(win, (30, 30, 30), start_game)
     # Give the button some text
     start = pygame.font.SysFont('Times New Roman', 18).render("Start Game", 1, (255, 255, 255))
-    win.blit(start, (195, 395))
+    win.blit(start, (205, 395))
 
     back_to_menu = pygame.Rect(180, 440, 134, 45)
     # Draw da buttons
     pygame.draw.rect(win, (30, 30, 30), back_to_menu)
     # Give the button some text
     back = pygame.font.SysFont('Times New Roman', 18).render("Back To Menu", 1, (255, 255, 255))
-    win.blit(back, (195, 445))
+    win.blit(back, (193, 450))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
