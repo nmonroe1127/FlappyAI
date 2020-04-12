@@ -25,14 +25,13 @@ FINISHED:::::Generation is not resetting to 1 ever.
 FINISHED:::::Issue 9:
 FINISHED:::::Fix Watch trained AI to only be 1 population
 
-FINISHED:::::Issue 10:
-FINISHED:::::remove extra planes
-
 Issue 11:
 Make this into an executable, no dependencies need to be installed.
 
 Issue 12:
 For some reason stop button on AI Trained is broken and sometimes takes multiple attempts. every other works perfect
 
-Issue 13:
+Issue 13: Styling Fixed
 Fix styling and fluidity of buttons on choosing gens and pop
+
+STOP FUCKING WITH MY PLANES
