@@ -305,16 +305,16 @@ def menu_window(win, plane, plane2, plane3, plane4, base):
     # .blit() is basically just draw for pygame
     # Place the background image center on the screen or (0,0) due to Pygame orientation
     win.blit(pygame.transform.scale2x(pygame.image.load(os.path.join("Images", "background.png"))), (0, 0))
+
     # call the method that will draw the ground into the game
     base.draw(win)
+
     # Calls the helper function to actually draw the plane
     plane.draw_spin(win)
-    # Calls the helper function to actually draw the plane
     plane2.draw_spin(win)
-    # Calls the helper function to actually draw the plane
     plane3.draw_spin(win)
-    # Calls the helper function to actually draw the plane
     plane4.draw_spin(win)
+
     # Add Title Image to Game
     win.blit(pygame.transform.scale(pygame.image.load(os.path.join("Images", "title.png")), (300, 150)), (100, 105))
 
@@ -327,54 +327,47 @@ def menu_window(win, plane, plane2, plane3, plane4, base):
     win.blit(increment, (285, 265))
 
     decrement_pop = pygame.Rect(180, 265, 40, 40)
-    # Draw da buttons
     pygame.draw.rect(win, (30, 30, 30), decrement_pop)
-    # Give the button some text
     decrement = STAT_FONT.render("-", 1, (255, 255, 255))
     win.blit(decrement, (195, 265))
 
-    # value_pop = pygame.Rect(225, 265, 40, 40)
-    # # Draw da buttons
-    # pygame.draw.rect(win, (30, 30, 30), value_pop)
-    # # Give the button some text
     value = VALUE_FONT.render(str(userPop), 1, (0, 0, 0))
-    win.blit(value, (235, 270))
+    if userPop < 10:
+        win.blit(value, (241, 270))
+    elif userPop >= 10:
+        win.blit(value, (233, 270))
+    title = pygame.font.SysFont('Times New Roman', 20).render("Population Size", 1, (0, 0, 0))
+    win.blit(title, (187, 240))
 
-    # Let the user increment the size of population to be used
-    increment_gen = pygame.Rect(275, 325, 40, 40)
-    # Draw da buttons
+    # Let the user increment the size of generations to be used
+    increment_gen = pygame.Rect(275, 345, 40, 40)
     pygame.draw.rect(win, (30, 30, 30), increment_gen)
-    # Give the button some text
     increment2 = STAT_FONT.render("+", 1, (255, 255, 255))
-    win.blit(increment2, (285, 325))
+    win.blit(increment2, (285, 345))
 
-    decrement_gen = pygame.Rect(180, 325, 40, 40)
-    # Draw da buttons
+    decrement_gen = pygame.Rect(180, 345, 40, 40)
     pygame.draw.rect(win, (30, 30, 30), decrement_gen)
-    # Give the button some text
     decrement2 = STAT_FONT.render("-", 1, (255, 255, 255))
-    win.blit(decrement2, (195, 325))
+    win.blit(decrement2, (195, 345))
 
-    # value_pop = pygame.Rect(225, 265, 40, 40)
-    # # Draw da buttons
-    # pygame.draw.rect(win, (30, 30, 30), value_pop)
-    # # Give the button some text
     value2 = VALUE_FONT.render(str(userGen), 1, (0, 0, 0))
-    win.blit(value2, (235, 325))
+    if userGen < 10:
+        win.blit(value2, (241, 350))
+    elif userGen >= 10:
+        win.blit(value2, (233, 350))
+    title2 = pygame.font.SysFont('Times New Roman', 20).render("Generation Size", 1, (0, 0, 0))
+    win.blit(title2, (184, 320))
 
-    start_game = pygame.Rect(180, 385, 134, 45)
-    # Draw da buttons
+
+    start_game = pygame.Rect(180, 410, 134, 45)
     pygame.draw.rect(win, (30, 30, 30), start_game)
-    # Give the button some text
     start = pygame.font.SysFont('Times New Roman', 18).render("Start Game", 1, (255, 255, 255))
-    win.blit(start, (205, 395))
+    win.blit(start, (205, 420))
 
-    back_to_menu = pygame.Rect(180, 440, 134, 45)
-    # Draw da buttons
+    back_to_menu = pygame.Rect(180, 470, 134, 45)
     pygame.draw.rect(win, (30, 30, 30), back_to_menu)
-    # Give the button some text
     back = pygame.font.SysFont('Times New Roman', 18).render("Back To Menu", 1, (255, 255, 255))
-    win.blit(back, (193, 450))
+    win.blit(back, (193, 480))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

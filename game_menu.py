@@ -22,38 +22,37 @@ def menu_window(win, plane, plane2, plane3, plane4, base, start_button1, start_b
     # .blit() is basically just draw for pygame
     # Place the background image center on the screen or (0,0) due to Pygame orientation
     win.blit(pygame.transform.scale2x(pygame.image.load(os.path.join("Images", "background.png"))), (0, 0))
+
     # call the method that will draw the ground into the game
     base.draw(win)
+
     # Calls the helper function to actually draw the plane
     plane.draw_spin(win)
-    # Calls the helper function to actually draw the plane
     plane2.draw_spin(win)
-    # Calls the helper function to actually draw the plane
     plane3.draw_spin(win)
-    # Calls the helper function to actually draw the plane
     plane4.draw_spin(win)
+
     # Add Title Image to Game
     win.blit(pygame.transform.scale(pygame.image.load(os.path.join("Images", "title.png")), (300, 150)), (100, 105))
+
     # Draw da buttons
     pygame.draw.rect(win, (30, 30, 30), start_button1)
     # Give the button some text
     start1 = pygame.font.SysFont('Times New Roman', 18).render("Play Game", 1, (255, 255, 255))
     win.blit(start1, (211, 275))
-    # Draw da buttons
+  
     pygame.draw.rect(win, (30, 30, 30), start_button2)
-    # Give the button some text
     start2 = pygame.font.SysFont('Times New Roman', 18).render("Watch AI Learn", 1, (255, 255, 255))
     win.blit(start2, (190, 355))
-    # Draw da buttons
+    
     pygame.draw.rect(win, (30, 30, 30), start_button3)
-    # Give the button some text
     start3 = pygame.font.SysFont('Times New Roman', 18).render("Watch Trained AI", 1, (255, 255, 255))
     win.blit(start3, (183, 435))
-    # Draw da buttons
+  
     pygame.draw.rect(win, (30, 30, 30), start_button4)
-    # Give the button some text
     start3 = pygame.font.SysFont('Times New Roman', 18).render("Play Against AI", 1, (255, 255, 255))
     win.blit(start3, (190, 515))
+
     # Updates the window with new visuals every frame
     pygame.display.update()
 
