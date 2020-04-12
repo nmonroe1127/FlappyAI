@@ -47,6 +47,7 @@ class AIPlane:
         self.img = self.IMGS[0]
         # for tracking the spin of plane on start screen
         self.spin_count = 0
+        self.moves = 1
 
     # The animation of a plane "jumping" on the screen
     def jump(self):
@@ -213,6 +214,7 @@ class UserPlane:
         self.img = self.IMGS[0]
         # for tracking the spin of plane on start screen
         self.spin_count = 0
+        self.moves = 1
 
     # The animation of a plane "jumping" on the screen
     def jump(self):
@@ -329,6 +331,21 @@ class UserPlane:
     # It pretty much convex hulls an image to get every possible pixel collision
     def get_mask(self):
         return pygame.mask.from_surface(self.img)
+
+
+    def moving(self, win):
+        if self.moves == 1:
+            if self.y < 150:
+                self.y += 5
+            elif self.y == 150:
+                self.moves = 0
+
+        if self.moves == 0:
+            if self.y > 10:
+                self.y -= 5
+            elif self.y == 10:
+                self.moves = 1
+
 
     # title screen plane spinning
     def draw_spin(self, win):

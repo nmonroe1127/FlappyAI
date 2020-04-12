@@ -23,8 +23,7 @@ STAT_FONT = pygame.font.SysFont("comicsans", 50)
 BUTTON_FONT = pygame.font.SysFont('Times New Roman', 15)
 
 
-def draw_window(win, plane, rocks, base, score, high):
-# def draw_window(win, plane, plane2, plane3, rocks, base, score, high):
+def draw_window(win, plane, plane2, plane3, rocks, base, score, high):
     # .blit() is basically just draw for pygame
     # Place the background image center on the screen or (0,0) due to Pygame orientation
     win.blit(BG_IMG, (0, 0))
@@ -41,14 +40,15 @@ def draw_window(win, plane, rocks, base, score, high):
     base.draw(win)
     # Calls the helper function to actually draw the plane
     plane.draw(win)
-    #plane2.draw2(win)
-    #plane3.draw2(win)
+    plane2.moving(win)
+    plane2.draw2(win)
+    plane3.moving(win)
+    plane3.draw2(win)
     #Updates the window with new visuals every frame
     pygame.display.update()
 
 
-#def player_game(plane, plane2, plane3):
-def player_game(plane):
+def player_game(plane, plane2, plane3):
     base = Base(670)
     rocks = [Rock(700)]
 
@@ -73,8 +73,7 @@ def player_game(plane):
                 plane.jump()
                 wait = False
         base.move()
-        # draw_window(win, plane, plane2, plane3, rocks, base, 0, high)
-        draw_window(win, plane, rocks, base, 0, high)
+        draw_window(win, plane, plane2, plane3, rocks, base, 0, high)
 
     # Keep track of how many rocks have been passed
     score = 0
@@ -136,12 +135,10 @@ def player_game(plane):
                     if i == 4:
                         i = 0
                     pygame.display.update()
-                    #draw_window(win, plane, plane2, plane3, rocks, base, score, high)
-                    draw_window(win, plane, rocks, base, score, high)
+                    draw_window(win, plane, plane2, plane3, rocks, base, score, high)
 
         base.move()
-        #draw_window(win, plane, plane2, plane3, rocks, base, score, high)
-        draw_window(win, plane, rocks, base, score, high)
+        draw_window(win, plane, plane2, plane3, rocks, base, score, high)
     # Save the highest score of the session to file for later
     with open('./HighScoreFiles/highscores.dat', 'wb') as file:
         pickle.dump(high, file)
@@ -150,10 +147,11 @@ def player_game(plane):
 # Option button 1, regular game for the user to play
 def option_one(win):
     plane = UserPlane(200, 350)
-    # plane2 = UserPlane(30, 30)
-    # plane3 = UserPlane(50, 70)
-    # player_game(plane, plane2, plane3)
-    player_game(plane)
+    plane2 = UserPlane(30, 30)
+    plane2.moves = 1
+    plane3 = UserPlane(80, 130)
+    plane3.moves = 1
+    player_game(plane, plane2, plane3)
 
     restart_game = pygame.Rect(180, 265, 134, 45)
     # Draw da buttons
