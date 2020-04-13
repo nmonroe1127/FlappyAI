@@ -335,9 +335,9 @@ class UserPlane:
 
     def moving(self, win):
         if self.moves == 1:
-            if self.y < 150:
+            if self.y < 115:
                 self.y += 5
-            elif self.y == 150:
+            elif self.y == 115:
                 self.moves = 0
 
         if self.moves == 0:
