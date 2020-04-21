@@ -19,8 +19,6 @@ FIRE_IMGS = [pygame.transform.scale(pygame.image.load(os.path.join("Images", "fi
 
 
 pygame.font.init()
-STAT_FONT = pygame.font.SysFont("comicsans", 50)
-BUTTON_FONT = pygame.font.SysFont('Times New Roman', 15)
 
 
 def draw_window(win, plane, plane2, plane3, rocks, base, score, high):
@@ -97,16 +95,16 @@ def player_game(plane, plane2, plane3):
         add_rock = False
         for rock in rocks:
             # If a plane pixels touches a rock pixel the plane will die
-            if rock.collide(plane):
+            if rock.collision_occurence(plane):
                 run = False
             # If rock is completely off the screen
-            if rock.x + rock.ROCK_TOP.get_width() < 0:
+            if rock.coordinate_pos + rock.ceiling_rock.get_width() < 0:
                 rem.append(rock)
                 # This will check if the plane has passed the rock
-            if not rock.passed and rock.x < plane.x:
-                rock.passed = True
+            if not rock.finished and rock.coordinate_pos < plane.x:
+                rock.finished = True
                 add_rock = True
-            rock.move()
+            rock.move_left()
         # For all the rocks that have been passed we need to regenerate new ones
         if add_rock:
             # Signifies in the scoreboard that a rock has been passed

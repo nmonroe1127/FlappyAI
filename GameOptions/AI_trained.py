@@ -3,108 +3,94 @@ import pygame
 import os
 import neat
 import pygame.freetype
+pygame.font.init()
 
 # Importing Objects from files
 from neat.nn import FeedForwardNetwork
-
 from Objects.plane import AIPlane
 from Objects.rock import Rock
 from Objects.base import Base
 
+# This is a boolean value to ensure smooth transitions of menu screen
 menu = True
-BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("Images", "background.png")))
+# This is just a holder for the background image
+background = pygame.transform.scale2x(pygame.image.load(os.path.join("Images", "background.png")))
 
-pygame.font.init()
-STAT_FONT = pygame.font.SysFont("comicsans", 50)
-BUTTON_FONT = pygame.font.SysFont('Times New Roman', 15)
-
-WIN_WIDTH = 500
-WIN_HEIGHT = 800
-
-WIN = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
-gen = 0
-
-def ai_window(win, plane, rocks, base, score, high, gen, full_size, alive):
+def ai_window(win, plane, rocks, base, score, high, full_size, alive):
     # .blit() is basically just draw for pygame
     # Place the background image center on the screen or (0,0) due to Pygame orientation
-    win.blit(BG_IMG, (0, 0))
+    win.blit(background, (0, 0))
     # Draw the multiple rocks that should be on the screen using ROCK class draw method
     for rock in rocks:
         rock.draw(win)
     # Render the high score to the screen that is pulled from a file
-    high_score = STAT_FONT.render("High Score: " + str(high), 1, (0, 0, 0))
-    win.blit(high_score, (WIN_WIDTH - 10 - high_score.get_width(), 10))
+    high_score = pygame.font.SysFont("comicsans", 50).render("High Score: " + str(high), 1, (0, 0, 0))
+    win.blit(high_score, (490 - high_score.get_width(), 10))
     # Render the score to the screen
-    score = STAT_FONT.render("Score: " + str(score), 1, (0, 0, 0))
-    win.blit(score, (WIN_WIDTH - 10 - score.get_width(), 45))
-    # Render the generation number to the screen
-    score = STAT_FONT.render("Gen: " + str(gen), 1, (0, 0, 0))
-    win.blit(score, (10, 10))
+    score = pygame.font.SysFont("comicsans", 50).render("Score: " + str(score), 1, (0, 0, 0))
+    win.blit(score, (490 - score.get_width(), 45))
     # Render the number of plane left alive
-    score_label = STAT_FONT.render("Alive: " + str(alive) + "/" + str(full_size), 1, (0, 0, 0))
-    win.blit(score_label, (10, 50))
+    score_label = pygame.font.SysFont("comicsans", 50).render("Alive: " + str(alive) + "/" + str(full_size), 1, (0, 0, 0))
+    win.blit(score_label, (10, 10))
     # call the method that will draw the ground into the game
     base.draw(win)
     # Calls the helper function to actually draw the plane
     plane.draw(win)
 
-    stop = pygame.Rect(10, 85, 90, 27)
+    stop = pygame.Rect(10, 45, 90, 27)
     pygame.draw.rect(win, (30, 30, 30), stop)
     back = pygame.font.SysFont('Times New Roman', 19).render("Stop", 1, (255, 255, 255))
-    win.blit(back, (37, 87))
+    win.blit(back, (37, 47))
 
     # Updates the window with new visuals every frame
     pygame.display.update()
 
 # This will hold the code for watching the AI learn
 def eval_genomes(config):
-    """
-        runs the simulation of the current population of
-        planes and sets their fitness based on the distance they
-        reach in the game.
-        """
-    global WIN, gen
-    win = WIN
-    gen += 1
+    global menu
+    # Declare the game window
+    win = pygame.display.set_mode((500, 800))
     alive = 1
     with open('./AIConfigurations/config-best.txt', 'rb') as f:
         c = pickle.load(f)
-    # start by creating lists holding the genome itself, the
-    # neural network associated with the genome and the
-    # plane object that uses that network to play
 
+    # Only need a singular plane because this is the best genome
     plane = AIPlane(200, 350)
-    net = FeedForwardNetwork.create(c, config)
+    # Only need to make a singular neuron in the ANN
+    neuron = FeedForwardNetwork.create(c, config)
 
+    # The size of the plane set is only 1 that needs to be displayed
     full_size = 1
 
+    # Intilize the background, rocks, and score
     base = Base(670)
     rocks = [Rock(700)]
     score = 0
 
+    # This will make sure the game doesnt move to fast for the site of the viewer
     clock = pygame.time.Clock()
 
+    # Pull down the high score from the trained AI
     try:
         with open('./HighScoreFiles/AI_highscores.dat', 'rb') as file:
             high = pickle.load(file)
     except:
         high = 0
 
-    stop = pygame.Rect(10, 85, 50, 30)
+    # This will allow the user to stop watching the AI at any point
+    stop = pygame.Rect(10, 45, 90, 27)
     pygame.draw.rect(win, (30, 30, 30), stop)
     back = pygame.font.SysFont('Times New Roman', 19).render("Stop", 1, (255, 255, 255))
-    win.blit(back, (15, 90))
-    global menu
+    win.blit(back, (37, 47))
+
 
     run = True
     while run:
         clock.tick(30)
-        if menu == False:
-            run = False
+        if not menu:
             break
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False
                 pygame.quit()
                 quit()
                 break
@@ -113,50 +99,44 @@ def eval_genomes(config):
                     menu = False
                     break
 
-        rock_ind = 0
-        if len(rocks) > 1 and plane.x > rocks[0].x + rocks[
-            0].ROCK_TOP.get_width():  # determine whether to use the first or second
-            rock_ind = 1  # rock on the screen for neural network input
-
-        plane.move()
-
-        # send plane location, top rock location and bottom rock location and determine from network whether to jump or not
-        output = net.activate(
-            (plane.y, abs(plane.y - rocks[rock_ind].height), abs(plane.y - rocks[rock_ind].bottom)))
-
-        if output[
-            0] > 0.5:  # we use a tanh activation function so result will be between -1 and 1. if over 0.5 jump
-            plane.jump()
-
-        base.move()
-
-        rem = []
         add_rock = False
         for rock in rocks:
-            # check for collision
-            if rock.collide(plane):
+            # Keep checking to see if the plane ever collides with a rock
+            if rock.collision_occurence(plane) or plane.y + plane.image_of_plane.get_height() - 10 >= 690 or plane.y < -50:
+                # If it ever does than the run should end because there is only one plane
                 run = False
+                # Also decrement the number of planes alive to show 0/1 are alive
                 alive = alive - 1
-
-            if rock.x + rock.ROCK_TOP.get_width() < 0:
-                rem.append(rock)
-
-            if not rock.passed and rock.x < plane.x:
-                rock.passed = True
+            # Once a rock passes the end of the screen we can remove it
+            if rock.coordinate_pos + rock.ceiling_rock.get_width() < 0:
+                rocks.remove(rock)
+            # See when we need to add another rock to the screen
+            if not rock.finished and rock.coordinate_pos < plane.x:
+                rock.finished = True
                 add_rock = True
-            rock.move()
+            rock.move_left()
+        # Every time a rock is passed we can increment the score by 1
         if add_rock:
             score += 1
             rocks.append(Rock(600))
 
-        for r in rem:
-            rocks.remove(r)
+        indexer = 0
+        if len(rocks) > 1 and plane.x > rocks[0].coordinate_pos + rocks[
+            0].ceiling_rock.get_width():
+            indexer = 1
 
-        if plane.y + plane.img.get_height() - 10 >= 690 or plane.y < -50:
-            run = False
-            alive = alive - 1
+        # The plane will always move even if jump does not occur
+        plane.move()
 
-        ai_window(win, plane, rocks, base, score, high, gen, full_size, alive)
+        # The activation function for neat, when above 0.5, should trigger a jump of the plane
+        if neuron.activate(
+                (plane.y, abs(plane.y - rocks[indexer].length), abs(plane.y - rocks[indexer].lower_bound)))[0] > 0.5:
+            # Activation function passed so jump the plane
+            plane.jump()
+
+        base.move()
+
+        ai_window(win, plane, rocks, base, score, high, full_size, alive)
 
     # Save the highest score of the session to file for later
     if high < score:
@@ -165,9 +145,7 @@ def eval_genomes(config):
 
 
 def run(config_path):
-    global gen
-    gen = 0
-    # # Defining all of the subheadings found in the config text file
+    # Setting up the ANN to be inline with the config file that is passed in
     config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction,
                                 neat.DefaultSpeciesSet, neat.DefaultStagnation,
                                 config_path)

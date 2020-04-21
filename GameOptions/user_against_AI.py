@@ -3,6 +3,7 @@ import pickle
 import pygame
 import neat
 import pygame.freetype
+pygame.font.init()
 
 #Importing objects from files
 from Objects.plane import UserPlane
@@ -11,10 +12,7 @@ from Objects.base import Base
 from Objects.plane import AIPlane
 from neat.nn import FeedForwardNetwork
 
-WIN_WIDTH = 500
-WIN_HEIGHT = 800
-
-BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("Images", "background.png")))
+background = pygame.transform.scale2x(pygame.image.load(os.path.join("Images", "background.png")))
 
 FIRE_IMGS = [pygame.transform.scale(pygame.image.load(os.path.join("Images", "fire1.png")), (80, 80)),
              pygame.transform.scale(pygame.image.load(os.path.join("Images", "fire2.png")), (80, 80)),
@@ -22,27 +20,19 @@ FIRE_IMGS = [pygame.transform.scale(pygame.image.load(os.path.join("Images", "fi
              pygame.transform.scale(pygame.image.load(os.path.join("Images", "fire4.png")), (80, 80))]
 
 
-pygame.font.init()
-STAT_FONT = pygame.font.SysFont("comicsans", 50)
-BUTTON_FONT = pygame.font.SysFont('Times New Roman', 15)
-
-WIN = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
-gen = 0
-
-
 def ai_window(win, planeAI, plane, rocks, base, score, high):
     # .blit() is basically just draw for pygame
     # Place the background image center on the screen or (0,0) due to Pygame orientation
-    win.blit(BG_IMG, (0, 0))
+    win.blit(background, (0, 0))
     # Draw the multiple rocks that should be on the screen using ROCK class draw method
     for rock in rocks:
         rock.draw(win)
     # Render the high score to the screen that is pulled from a file
-    high_score = STAT_FONT.render("High Score: " + str(high), 1, (0, 0, 0))
-    win.blit(high_score, (WIN_WIDTH - 10 - high_score.get_width(), 10))
+    high_score = pygame.font.SysFont("comicsans", 50).render("High Score: " + str(high), 1, (0, 0, 0))
+    win.blit(high_score, (490 - high_score.get_width(), 10))
     # Render the score to the screen
-    score = STAT_FONT.render("Score: " + str(score), 1, (0, 0, 0))
-    win.blit(score, (WIN_WIDTH - 10 - score.get_width(), 45))
+    score = pygame.font.SysFont("comicsans", 50).render("Score: " + str(score), 1, (0, 0, 0))
+    win.blit(score, (490 - score.get_width(), 45))
     # call the method that will draw the ground into the game
     base.draw(win)
     # Calls the helper function to actually draw the planeAI
@@ -55,16 +45,16 @@ def ai_window(win, planeAI, plane, rocks, base, score, high):
 def draw_window(win, plane, plane2, plane3, plane4, planeAI, rocks, base, score, high):
     # .blit() is basically just draw for pygame
     # Place the background image center on the screen or (0,0) due to Pygame orientation
-    win.blit(BG_IMG, (0, 0))
+    win.blit(background, (0, 0))
     # Draw the multiple rocks that should be on the screen using ROCK class draw method
     for rock in rocks:
         rock.draw(win)
     # Render the high score to the screen that is pulled from a file
     high_score = pygame.font.SysFont("comicsans", 50).render("High Score: " + str(high), 1, (0, 0, 0))
-    win.blit(high_score, (WIN_WIDTH - 10 - high_score.get_width(), 10))
+    win.blit(high_score, (490 - high_score.get_width(), 10))
     # Render the score to the screen
     score = pygame.font.SysFont("comicsans", 50).render("Score: " + str(score), 1, (0, 0, 0))
-    win.blit(score, (WIN_WIDTH - 10 - score.get_width(), 45))
+    win.blit(score, (490 - score.get_width(), 45))
     # call the method that will draw the ground into the game
     base.draw(win)
     # Draw the AI
@@ -89,12 +79,17 @@ def user_vs_AI(config, plane, plane2, plane3, plane4):
     # Setup the AI plane
     with open('./AIConfigurations/config-best.txt', 'rb') as f:
         c = pickle.load(f)
+
+    # Make the plane that the user will be playing with
     planeAI = AIPlane(200, 350)
+    # Create the ANN for the singular AI plane
     net = FeedForwardNetwork.create(c, config)
 
-    win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+    # Create the gamescreen and then start a clock so that screen speed is controlled
+    win = pygame.display.set_mode((500, 800))
     clock = pygame.time.Clock()
 
+    # Try to load the high score from previous games that were played by the user
     try:
         with open('./HighScoreFiles/highscores.dat', 'rb') as file:
             high = pickle.load(file)
@@ -131,37 +126,25 @@ def user_vs_AI(config, plane, plane2, plane3, plane4):
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 plane.jump()
 
-        rock_ind = 0
-        if len(rocks) > 1 and planeAI.x > rocks[0].x + rocks[0].ROCK_TOP.get_width():  # determine whether to use the first or second
-            rock_ind = 1  # rock on the screen for neural network input
-
-        planeAI.move()
-
-        # send planeAI location, top rock location and bottom rock location and determine from network whether to jump or not
-        output = net.activate(
-            (planeAI.y, abs(planeAI.y - rocks[rock_ind].height), abs(planeAI.y - rocks[rock_ind].bottom)))
-
-        if output[0] > 0.5:  # we use a tanh activation function so result will be between -1 and 1. if over 0.5 jump
-            planeAI.jump()
-
-        # Array to hold rocks that have left the screen and need to be removed
-        rem = []
         # Only add passed rocks
         add_rock = False
         for rock in rocks:
+            # Always move that little rocky to the left of the screen
+            rock.move_left()
             # If a planeAI pixels touches a rock pixel the planeAI will die
-            if rock.collide(plane):
+            if rock.collision_occurence(plane) or plane.y + plane.img.get_height() >= 730 or plane.y + plane.img.get_height() < -50:
                 run = False
-            if rock.collide(planeAI):
+            # We are also checking to make sure that the plane does not touch the ground or the ceiling
+            if rock.collision_occurence(planeAI) or planeAI.y + planeAI.image_of_plane.get_height() >= 730 or planeAI.y + planeAI.image_of_plane.get_height() < -50:
                 run = False
             # If rock is completely off the screen
-            if rock.x + rock.ROCK_TOP.get_width() < 0:
-                rem.append(rock)
-                # This will check if the planeAI has passed the rock
-            if not rock.passed and rock.x < plane.x:
-                rock.passed = True
+            if rock.coordinate_pos + rock.ceiling_rock.get_width() < 0:
+                rocks.remove(rock)
+            # This will check if the planeAI has passed the rock
+            if not rock.finished and rock.coordinate_pos < plane.x:
+                rock.finished = True
                 add_rock = True
-            rock.move()
+
         # For all the rocks that have been passed we need to regenerate new ones
         if add_rock:
             # Signifies in the scoreboard that a rock has been passed
@@ -170,33 +153,44 @@ def user_vs_AI(config, plane, plane2, plane3, plane4):
                 high += 1
             rocks.append(Rock(600))
 
-        for r in rem:
-            rocks.remove(r)
+        indexer = 0
+        if len(rocks) > 1 and planeAI.x > rocks[0].coordinate_pos + rocks[0].ceiling_rock.get_width():
+            indexer = 1
 
-        # If the planeAI hits the ground
-        if plane.y + plane.img.get_height() >= 730 or plane.y + plane.img.get_height() < -50:
-            run = False
+        # Plane will move regardless of what happens
+        planeAI.move()
 
-        if planeAI.y + planeAI.img.get_height() >= 730 or planeAI.y + planeAI.img.get_height() < -50:
-            run = False
+        # The activation function for neat, when above 0.5, should trigger a jump of the plane
+        # 0.5 was defined in the config file as the boundary value where a jump should occur
+        if net.activate(
+                (planeAI.y, abs(planeAI.y - rocks[indexer].length), abs(planeAI.y - rocks[indexer].lower_bound)))[
+            0] > 0.5:
+            # Activation function passed so jump the plane
+            planeAI.jump()
 
+        # This section shows a flaming plane falling to the ground to mimic a realistic environment
         if run == False:
             while fall == True:
-                clock.tick(40)
+                clock.tick(30)
+                # Checking to see if the plane has hit the ceiling
                 if plane.y + plane.img.get_height() >= 780:
                     fall = False
+                # IF below ceiling and above ground run this section
                 elif plane.y + plane.img.get_height() < 780:
                     plane.move()
                     i = 0
+                    # Show the fire animation gif on the front of the plane
                     win.blit(FIRE_IMGS[i], (plane.x, plane.y))
                     i += 1
                     if i == 4:
                         i = 0
                     pygame.display.update()
                     draw_window(win, plane, plane2, plane3, plane4, planeAI, rocks, base, score, high)
+                # If AI is below ceiling and above ground mimic a falling motion
                 elif planeAI.y + planeAI.img.get_height() < 780:
                     planeAI.move()
                     i = 0
+                    # Show the fire animation gif on the front of the plane
                     win.blit(FIRE_IMGS[i], (planeAI.x, planeAI.y))
                     i += 1
                     if i == 4:

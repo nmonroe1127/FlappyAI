@@ -2,72 +2,48 @@ import pygame
 import os
 import random
 
-# Loading the Rocks to serve as obstacles
-ROCK_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("Images", "bottomRock.png")))
 
 class Rock:
-    # Space between two rocks
-    GAP = 150
-    # rocks move, not the plane
-    VELOCITY = 5
-
     # Height of rock is random so not passed in
-    def __init__(self, x):
-        self.x = x
-        self.height = 0
-
-        # This is so that it can be attached to top or bottom of frame and tracked easily
-        # Where the top of the rock will be drawn on the screen
-        self.top = 0
-        # Where the bottom of the rock will be drawn on the screen
-        self.bottom = 0
+    def __init__(self, coordinate_pos):
+        # Current Coordinate position of the rock
+        self.coordinate_pos = coordinate_pos
+        # Length of the Rock to be placed
+        self.length = random.randrange(100, 400)
         # Image if rock is attached to top of the screen, needs to be flipped
-        self.ROCK_TOP = pygame.transform.flip(ROCK_IMG, False, True)
+        self.ceiling_rock = pygame.transform.flip(
+            pygame.transform.scale2x(pygame.image.load(os.path.join("Images", "bottomRock.png"))), False, True)
         # Image if the rock is attached to bottom of screen
-        self.ROCK_BOTTOM = ROCK_IMG
+        self.ground_rock = pygame.transform.scale2x(pygame.image.load(os.path.join("Images", "bottomRock.png")))
+
+        # Drawing the rock at a negative location so that there is room for plane to go through
+        self.upper_bound = self.length - self.ceiling_rock.get_height()
+        # Where the bottom of the rock will be drawn on the screen
+        self.lower_bound = self.length + 200
 
         # If the rock has already passed the rock
-        self.passed = False
-        # Will define top, bottom, and length of rocks
-        self.set_height()
-
-    def set_height(self):
-        self.height = random.randrange(100, 400)
-        # Drawing the rock at a negative location so that there is room for plane to go through
-        self.top = self.height - self.ROCK_TOP.get_height()
-        self.bottom = self.height + self.GAP + 50
+        self.finished = False
 
     # Literally just moving it in x direction
-    def move(self):
-        self.x -= self.VELOCITY
+    def move_left(self):
+        self.coordinate_pos -= 5
 
     def draw(self, win):
-        win.blit(self.ROCK_TOP, (self.x, self.top))
-        win.blit(self.ROCK_BOTTOM, (self.x, self.bottom))
+        x_coordinate = self.coordinate_pos
+        ceiling_y_coordinate = self.upper_bound
+        ground_y_coordinate = self.lower_bound
+        win.blit(self.ceiling_rock, (x_coordinate, ceiling_y_coordinate))
+        win.blit(self.ground_rock, (x_coordinate, ground_y_coordinate))
 
     # Registering if the plane pixels collides with any of the rock pixels
-    def collide(self, plane):
-        # Get the pixels that define a plane
-        plane_mask = plane.get_mask()
-        # Get the pixels that define the top rock
-        top_mask = pygame.mask.from_surface(self.ROCK_TOP)
-        # Get the pixels that define the bottom rock
-        bottom_mask = pygame.mask.from_surface(self.ROCK_BOTTOM)
-
-        # Define an offset to find the distance between the plane pixels and top rock pixels
-        top_offset = (self.x - plane.x, self.top - round(plane.y))
-        # Define an offset to find the distance between the plane pixels and bottom rock pixels
-        bottom_offset = (self.x - plane.x, self.bottom - round(plane.y))
-
+    def collision_occurence(self, plane):
         # Finds the first point of collision between bottom rock and offset distance
         # IF there is no overlap, it will return "NONE", otherwise it shows collision
-        b_point = plane_mask.overlap(bottom_mask, bottom_offset)
-        # Finds the first point of collision between top rock and offset distance
-        t_point = plane_mask.overlap(top_mask, top_offset)
-
-        # Check to see if either choice is not NONE
-        if t_point or b_point:
-            # This is if there is a collision
+        if plane.get_mask().overlap(pygame.mask.from_surface(self.ground_rock), (self.coordinate_pos - plane.x, self.lower_bound - round(plane.y))):
             return True
-        # This is if there is no collision
-        return False
+        # Finds the first point of collision between top rock and offset distance
+        elif plane.get_mask().overlap(pygame.mask.from_surface(self.ceiling_rock), (self.coordinate_pos - plane.x, self.upper_bound - round(plane.y))):
+            return True
+        # No collision has occurred
+        else:
+            return False
