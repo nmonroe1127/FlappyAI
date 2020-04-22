@@ -145,10 +145,12 @@ def player_game(plane, plane2, plane3):
 # Option button 1, regular game for the user to play
 def option_one(win):
     plane = UserPlane(200, 350)
+
     plane2 = UserPlane(30, 30)
+    plane3 = UserPlane(80, 110)
     plane2.moves = 1
-    plane3 = UserPlane(80, 130)
     plane3.moves = 1
+
     player_game(plane, plane2, plane3)
 
     restart_game = pygame.Rect(180, 265, 134, 45)
