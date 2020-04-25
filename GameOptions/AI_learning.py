@@ -14,7 +14,11 @@ from Objects.base import Base
 
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("Images", "background.png")))
 menu = True
+
+pygame.init()
 pygame.font.init()
+all_fonts = pygame.font.get_fonts()
+font = pygame.font.SysFont(all_fonts[5], 32)
 
 game_window = pygame.display.set_mode((500, 800))
 current_generation = 0
@@ -33,16 +37,16 @@ def ai_window(win, planes, rocks, base, score, high, current_generation, full_si
     for rock in rocks:
         rock.draw(win)
     # Render the high score to the screen that is pulled from a file
-    high_score = pygame.font.SysFont("comicsans", 50).render("High Score: " + str(high), 1, (0, 0, 0))
+    high_score = font.render("High Score: " + str(high), 1, (0, 0, 0))
     win.blit(high_score, (490 - high_score.get_width(), 10))
     # Render the score to the screen
-    score = pygame.font.SysFont("comicsans", 50).render("Score: " + str(score), 1, (0, 0, 0))
+    score = font.render("Score: " + str(score), 1, (0, 0, 0))
     win.blit(score, (490 - score.get_width(), 45))
     # Render the generation number to the screen
-    score = pygame.font.SysFont("comicsans", 50).render("Gen: " + str(current_generation), 1, (0, 0, 0))
+    score = font.render("Gen: " + str(current_generation), 1, (0, 0, 0))
     win.blit(score, (10, 10))
     # Render the number of plane left alive
-    score_label = pygame.font.SysFont("comicsans", 50).render("Alive: " + str(len(planes)) + "/" + str(full_size), 1, (0, 0, 0))
+    score_label = font.render("Alive: " + str(len(planes)) + "/" + str(full_size), 1, (0, 0, 0))
     win.blit(score_label, (10, 50))
     # call the method that will draw the ground into the game
     base.draw(win)
@@ -474,15 +478,15 @@ def menu_window(win, plane, plane2, plane3, plane4, base):
     # Draw da buttons
     pygame.draw.rect(win, (30, 30, 30), increment_pop)
     # Give the button some text
-    increment = pygame.font.SysFont("comicsans", 50).render("+", 1, (255, 255, 255))
+    increment = font.render("+", 1, (255, 255, 255))
     win.blit(increment, (285, 265))
 
     decrement_pop = pygame.Rect(180, 265, 40, 40)
     pygame.draw.rect(win, (30, 30, 30), decrement_pop)
-    decrement = pygame.font.SysFont("comicsans", 50).render("-", 1, (255, 255, 255))
+    decrement = font.render("-", 1, (255, 255, 255))
     win.blit(decrement, (195, 265))
 
-    value = pygame.font.SysFont("comicsans", 35).render(str(userPop), 1, (0, 0, 0))
+    value = pygame.font.SysFont("Times New Roman", 32).render(str(userPop), 1, (0, 0, 0))
     if userPop < 10:
         win.blit(value, (241, 270))
     elif userPop >= 10:
@@ -493,15 +497,15 @@ def menu_window(win, plane, plane2, plane3, plane4, base):
     # Let the user increment the size of generations to be used
     increment_gen = pygame.Rect(275, 345, 40, 40)
     pygame.draw.rect(win, (30, 30, 30), increment_gen)
-    increment2 = pygame.font.SysFont("comicsans", 50).render("+", 1, (255, 255, 255))
+    increment2 = font.render("+", 1, (255, 255, 255))
     win.blit(increment2, (285, 345))
 
     decrement_gen = pygame.Rect(180, 345, 40, 40)
     pygame.draw.rect(win, (30, 30, 30), decrement_gen)
-    decrement2 = pygame.font.SysFont("comicsans", 50).render("-", 1, (255, 255, 255))
+    decrement2 = font.render("-", 1, (255, 255, 255))
     win.blit(decrement2, (195, 345))
 
-    value2 = pygame.font.SysFont("comicsans", 35).render(str(userGen), 1, (0, 0, 0))
+    value2 = pygame.font.SysFont("Times New Roman", 32).render(str(userGen), 1, (0, 0, 0))
     if userGen < 10:
         win.blit(value2, (241, 350))
     elif userGen >= 10:

@@ -3,7 +3,11 @@ import pickle
 import pygame
 import neat
 import pygame.freetype
+
+pygame.init()
 pygame.font.init()
+all_fonts = pygame.font.get_fonts()
+font = pygame.font.SysFont(all_fonts[5], 40)
 
 #Importing objects from files
 from Objects.plane import UserPlane
@@ -28,10 +32,10 @@ def ai_window(win, planeAI, plane, rocks, base, score, high):
     for rock in rocks:
         rock.draw(win)
     # Render the high score to the screen that is pulled from a file
-    high_score = pygame.font.SysFont("comicsans", 50).render("High Score: " + str(high), 1, (0, 0, 0))
+    high_score = font.render("High Score: " + str(high), 1, (0, 0, 0))
     win.blit(high_score, (490 - high_score.get_width(), 10))
     # Render the score to the screen
-    score = pygame.font.SysFont("comicsans", 50).render("Score: " + str(score), 1, (0, 0, 0))
+    score = font.render("Score: " + str(score), 1, (0, 0, 0))
     win.blit(score, (490 - score.get_width(), 45))
     # call the method that will draw the ground into the game
     base.draw(win)
@@ -50,10 +54,10 @@ def draw_window(win, plane, plane2, plane3, plane4, planeAI, rocks, base, score,
     for rock in rocks:
         rock.draw(win)
     # Render the high score to the screen that is pulled from a file
-    high_score = pygame.font.SysFont("comicsans", 50).render("High Score: " + str(high), 1, (0, 0, 0))
+    high_score = font.render("High Score: " + str(high), 1, (0, 0, 0))
     win.blit(high_score, (490 - high_score.get_width(), 10))
     # Render the score to the screen
-    score = pygame.font.SysFont("comicsans", 50).render("Score: " + str(score), 1, (0, 0, 0))
+    score = font.render("Score: " + str(score), 1, (0, 0, 0))
     win.blit(score, (490 - score.get_width(), 45))
     # call the method that will draw the ground into the game
     base.draw(win)
@@ -206,11 +210,11 @@ def user_vs_AI(config, plane, plane2, plane3, plane4):
 
 
 def run(config_path, plane, plane2, plane3 ,plane4):
+    print("run")
     # # Defining all of the subheadings found in the config text file
     config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction,
                                 neat.DefaultSpeciesSet, neat.DefaultStagnation,
                                 config_path)
-
     user_vs_AI(config, plane, plane2, plane3, plane4)
 
 
@@ -231,6 +235,7 @@ def option_four(win):
     plane2.moves = 1
     plane3.moves = 1
     plane4.moves = 0
+    
     configuration(plane, plane2, plane3, plane4)
 
     restart_game = pygame.Rect(180, 265, 134, 45)

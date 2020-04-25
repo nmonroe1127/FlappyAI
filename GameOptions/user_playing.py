@@ -18,8 +18,10 @@ FIRE_IMGS = [pygame.transform.scale(pygame.image.load(os.path.join("Images", "fi
              pygame.transform.scale(pygame.image.load(os.path.join("Images", "fire4.png")), (80, 80))]
 
 
+pygame.init()
 pygame.font.init()
-
+all_fonts = pygame.font.get_fonts()
+font = pygame.font.SysFont(all_fonts[5], 40)
 
 def draw_window(win, plane, plane2, plane3, rocks, base, score, high):
     # .blit() is basically just draw for pygame
@@ -29,10 +31,10 @@ def draw_window(win, plane, plane2, plane3, rocks, base, score, high):
     for rock in rocks:
         rock.draw(win)
     # Render the high score to the screen that is pulled from a file
-    high_score = pygame.font.SysFont("comicsans", 50).render("High Score: " + str(high), 1, (0, 0, 0))
+    high_score = font.render("High Score: " + str(high), 1, (0, 0, 0))
     win.blit(high_score, (WIN_WIDTH - 10 - high_score.get_width(), 10))
     # Render the score to the screen
-    score = pygame.font.SysFont("comicsans", 50).render("Score: " + str(score), 1, (0, 0, 0))
+    score = font.render("Score: " + str(score), 1, (0, 0, 0))
     win.blit(score, (WIN_WIDTH - 10 - score.get_width(), 45))
     # call the method that will draw the ground into the game
     base.draw(win)

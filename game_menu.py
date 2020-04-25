@@ -12,6 +12,7 @@ from GameOptions.AI_learning import option_two
 from GameOptions.AI_trained import option_three
 from GameOptions.user_against_AI import option_four
 
+pygame.init()
 pygame.font.init()
 
 # Got my images from this source

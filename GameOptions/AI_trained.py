@@ -3,7 +3,11 @@ import pygame
 import os
 import neat
 import pygame.freetype
+
+pygame.init()
 pygame.font.init()
+all_fonts = pygame.font.get_fonts()
+font = pygame.font.SysFont(all_fonts[5], 32)
 
 # Importing Objects from files
 from neat.nn import FeedForwardNetwork
@@ -24,13 +28,13 @@ def ai_window(win, plane, rocks, base, score, high, full_size, alive):
     for rock in rocks:
         rock.draw(win)
     # Render the high score to the screen that is pulled from a file
-    high_score = pygame.font.SysFont("comicsans", 50).render("High Score: " + str(high), 1, (0, 0, 0))
+    high_score = font.render("High Score: " + str(high), 1, (0, 0, 0))
     win.blit(high_score, (490 - high_score.get_width(), 10))
     # Render the score to the screen
-    score = pygame.font.SysFont("comicsans", 50).render("Score: " + str(score), 1, (0, 0, 0))
+    score = font.render("Score: " + str(score), 1, (0, 0, 0))
     win.blit(score, (490 - score.get_width(), 45))
     # Render the number of plane left alive
-    score_label = pygame.font.SysFont("comicsans", 50).render("Alive: " + str(alive) + "/" + str(full_size), 1, (0, 0, 0))
+    score_label = font.render("Alive: " + str(alive) + "/" + str(full_size), 1, (0, 0, 0))
     win.blit(score_label, (10, 10))
     # call the method that will draw the ground into the game
     base.draw(win)
