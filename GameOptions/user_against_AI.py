@@ -210,7 +210,6 @@ def user_vs_AI(config, plane, plane2, plane3, plane4):
 
 
 def run(config_path, plane, plane2, plane3 ,plane4):
-    print("run")
     # # Defining all of the subheadings found in the config text file
     config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction,
                                 neat.DefaultSpeciesSet, neat.DefaultStagnation,
@@ -220,8 +219,7 @@ def run(config_path, plane, plane2, plane3 ,plane4):
 
 def configuration(plane, plane2, plane3, plane4):
     # Finding the file that will hold the neural network and GA configurations
-    local_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "AIConfigurations")
-    config_path = os.path.join(local_dir, "config-single.txt")
+    config_path = "config-single.txt"
     # Run the file that contains the neural network configurations
     run(config_path, plane, plane2, plane3, plane4)
 

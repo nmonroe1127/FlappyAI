@@ -159,8 +159,7 @@ def run(config_path):
 
 def configuration():
     # Finding the file that will hold the neural network and GA configurations
-    local_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "AIConfigurations")
-    config_path = os.path.join(local_dir, "config-single.txt")
+    config_path = "config-single.txt"
     # Run the file that contains the neural network configurations
     run(config_path)
 
