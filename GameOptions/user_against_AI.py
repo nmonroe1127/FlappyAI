@@ -107,7 +107,7 @@ def user_vs_AI(config, plane, plane2, plane3, plane4):
         # Moving and jumping of the planeAI
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                wait = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 plane.jump()
                 wait = False
@@ -126,7 +126,7 @@ def user_vs_AI(config, plane, plane2, plane3, plane4):
         plane.move()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                run = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 plane.jump()
 
@@ -266,7 +266,7 @@ def option_four(win):
         # Moving and jumping of the planeAI
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                wait = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # 1 is the left mouse button, 2 is middle, 3 is right.
                 if event.button == 1:

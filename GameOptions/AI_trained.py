@@ -95,8 +95,7 @@ def eval_genomes(config):
             break
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
+                run = False
                 break
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if stop.collidepoint(event.pos):
@@ -193,7 +192,7 @@ def option_three(win):
         # Moving and jumping of the plane
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                wait = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # 1 is the left mouse button, 2 is middle, 3 is right.
                 if event.button == 1:

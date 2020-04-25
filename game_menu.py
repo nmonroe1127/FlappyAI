@@ -85,7 +85,7 @@ def main():
         # Moving and jumping of the plane
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                wait = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # 1 is the left mouse button, 2 is middle, 3 is right.
                 if event.button == 1:
@@ -105,7 +105,6 @@ def main():
         menu_window(win, plane, plane2, plane3, plane4, base, start_button1, start_button2, start_button3, start_button4)
 
     pygame.quit()
-    quit()
 
 
 main()

@@ -61,7 +61,7 @@ def ai_window(win, planes, rocks, base, score, high, current_generation, full_si
     global menu
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
+            menu = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 if stop.collidepoint(event.pos):
@@ -106,11 +106,6 @@ def run_neat(ANN, genotypes, planes_to_add):
         clock.tick(30)
         if not menu:
             break
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-                break
 
         for rock in rocks:
             rock.move_left()
@@ -525,7 +520,8 @@ def menu_window(win, plane, plane2, plane3, plane4, base):
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
+            userChoosing = False
+            userContinue = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # 1 is the left mouse button, 2 is middle, 3 is right.
             if event.button == 1:
@@ -575,7 +571,8 @@ def user_inputs():
         # Moving and jumping of the plane
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+               userChoosing = False
+               userContinue = False
 
         base.move()
         menu_window(game_window, plane, plane2, plane3, plane4, base)
@@ -613,7 +610,7 @@ def option_two(win):
             # Moving and jumping of the plane
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
+                    wait = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     # 1 is the left mouse button, 2 is middle, 3 is right.
                     if event.button == 1:

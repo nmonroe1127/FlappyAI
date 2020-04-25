@@ -21,7 +21,7 @@ FIRE_IMGS = [pygame.transform.scale(pygame.image.load(os.path.join("Images", "fi
 pygame.init()
 pygame.font.init()
 all_fonts = pygame.font.get_fonts()
-font = pygame.font.SysFont(all_fonts[5], 40)
+font = pygame.font.SysFont(all_fonts[5], 45)
 
 def draw_window(win, plane, plane2, plane3, rocks, base, score, high):
     # .blit() is basically just draw for pygame
@@ -68,7 +68,7 @@ def player_game(plane, plane2, plane3):
         # Moving and jumping of the plane
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                wait = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 plane.jump()
                 wait = False
@@ -87,7 +87,7 @@ def player_game(plane, plane2, plane3):
         plane.move()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                run = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 plane.jump()
 
@@ -186,7 +186,7 @@ def option_one(win):
         # Moving and jumping of the plane
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                wait = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
 
                 if restart_game.collidepoint(event.pos):
