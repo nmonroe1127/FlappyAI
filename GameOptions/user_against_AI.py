@@ -219,7 +219,7 @@ def run(config_path, plane, plane2, plane3 ,plane4):
 
 def configuration(plane, plane2, plane3, plane4):
     # Finding the file that will hold the neural network and GA configurations
-    config_path = "config-single.txt"
+    config_path = "AIConfigurations/config-single.txt"
     # Run the file that contains the neural network configurations
     run(config_path, plane, plane2, plane3, plane4)
 

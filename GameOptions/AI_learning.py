@@ -203,7 +203,7 @@ def run(config_path):
 def configuration():
     global userPop
     # Finding the file that will hold the neural network and GA configurations
-    config_path = "config-feedforward.txt"
+    config_path = "AIConfigurations/config-feedforward.txt"
     # Opening the file so that we can write to it
     config_file = open(config_path, "w+")
 
